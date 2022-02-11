@@ -30,7 +30,6 @@ jobs:
         os:
           - ubuntu-20.04
           - macos-10.15
-          - windows-2019
         compiler:
           # you can specify the version after `-` like "llvm-13.0.0".
           - llvm

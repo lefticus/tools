@@ -1,4 +1,3 @@
-find_package(fmt CONFIG)
 find_package(spdlog CONFIG)
 find_package(docopt CONFIG)
 
@@ -9,5 +8,4 @@ target_link_libraries(
   PRIVATE project_options
           project_warnings
           docopt::docopt
-          fmt::fmt
           spdlog::spdlog)

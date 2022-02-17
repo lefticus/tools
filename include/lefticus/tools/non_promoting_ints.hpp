@@ -181,6 +181,8 @@ struct int_np {
     return *this;
   }
 
+  friend constexpr auto operator<=>(const int_np &, const int_np &) = default;
+
  private:
   value_type value;
 };

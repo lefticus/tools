@@ -28,6 +28,8 @@ catch_discover_tests(
   OUTPUT_SUFFIX
   .xml)
 
+
+
 # Add a file containing a set of constexpr tests
 add_executable(constexpr_tests constexpr_tests.cpp)
 target_link_libraries(constexpr_tests PRIVATE project_options project_warnings catch_main)

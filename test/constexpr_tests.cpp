@@ -1,6 +1,16 @@
 #include <catch2/catch.hpp>
 #include <lefticus/tools/consteval_invoke.hpp>
 #include <lefticus/tools/static_views.hpp>
+#include <lefticus/tools/non_promoting_ints.hpp>
+#include <lefticus/tools/lambda_coroutines.hpp>
+#include <lefticus/tools/simple_stack_vector.hpp>
+
+#ifdef CATCH_CONFIG_RUNTIME_STATIC_REQUIRE
+#define CONSTEXPR
+#else
+#define CONSTEXPR constexpr
+#endif
+
 
 constexpr unsigned int Factorial(unsigned int number)// NOLINT(misc-no-recursion)
 {
@@ -51,4 +61,106 @@ TEST_CASE("to_span produces an std::span")
   STATIC_REQUIRE(result.size() == 3);
 
 }
+
+TEST_CASE("npint UDLs work") {
+  using namespace lefticus::tools::literals;
+
+  CONSTEXPR const auto i1 = 1_np8;
+  static_assert(std::is_same_v < decltype(i1), const lefticus::tools::int_np<std::int8_t>>);
+}
+
+
+TEST_CASE("npint + int = npint")
+{
+  using namespace lefticus::tools::literals;
+
+  CONSTEXPR const auto i1 = 1_np8 + std::int8_t{ 2 };
+  static_assert(std::is_same_v<decltype(i1), const lefticus::tools::int_np<std::int8_t>>);
+}
+
+TEST_CASE("int + npint = npint")
+{
+  using namespace lefticus::tools::literals;
+
+  CONSTEXPR const auto i1 = std::int8_t{ 2 } + 1_np8;
+  static_assert(std::is_same_v<decltype(i1), const lefticus::tools::int_np<std::int8_t>>);
+}
+
+TEST_CASE("npint << int = npint")
+{
+  using namespace lefticus::tools::literals;
+
+  CONSTEXPR const auto i1 = 1_np8 << 2;
+  static_assert(std::is_same_v<decltype(i1), const lefticus::tools::int_np<std::int8_t>>);
+}
+
+
+
+TEST_CASE("2_np8 << 3 == 26")
+{
+  using namespace lefticus::tools::literals;
+
+  STATIC_REQUIRE(2_np8 << 3 == 16_np8);
+}
+
+
+TEST_CASE("can compare np_int to underlying type")
+{
+  using namespace lefticus::tools::literals;
+
+  STATIC_REQUIRE(2_np8 == static_cast<std::int8_t>(2));
+}
+
+
+TEST_CASE("np_int is only constructible from underlying type")
+{
+  using namespace lefticus::tools::literals;
+
+  STATIC_REQUIRE(std::is_constructible_v<lefticus::tools::int_np8_t, std::int8_t>);
+  STATIC_REQUIRE(!std::is_constructible_v<lefticus::tools::int_np8_t, std::uint8_t>);
+}
+
+
+
+CONSTEXPR std::array<unsigned long long, 10> get_first_10()
+{
+  auto fib = [state = 0, fib_2 = 0ULL, fib_1 = 1ULL]() mutable -> std::optional<unsigned long long> {
+    lambda_co_begin(state);
+
+    lambda_co_yield(0);
+    lambda_co_yield(1);
+
+    while (fib_1 < std::numeric_limits<decltype(fib_1)>::max() / 2) {
+      fib_2 = std::exchange(fib_1, fib_2 + fib_1);
+      lambda_co_yield(fib_1);
+    }
+
+    lambda_co_return({});
+  };
+
+  const auto _1 = fib().value();
+  const auto _2 = fib().value();
+  const auto _3 = fib().value();
+  const auto _4 = fib().value();
+  const auto _5 = fib().value();
+  const auto _6 = fib().value();
+  const auto _7 = fib().value();
+  const auto _8 = fib().value();
+  const auto _9 = fib().value();
+  const auto _10 = fib().value();
+
+
+  return { _1, _2, _3, _4, _5, _6, _7, _8, _9, _10 };
+}
+
+#if (defined(_MSC_VER) && defined(CATCH_CONFIG_RUNTIME_STATIC_REQUIRE)) || !defined(_MSC_VER)
+TEST_CASE("lambda_coroutines are constexpr capable", "[constexpr]")
+{ 
+  STATIC_REQUIRE(get_first_10()[4] == 3ULL);
+}
+#else
+#pragma message("Visual Studio's constexpr engine is not capable of handling the lambda coroutines")
+#endif
+
+TEST_CASE("simple_stack_vector starts empty") { STATIC_REQUIRE(lefticus::tools::simple_stack_vector<int, 10>{}.empty() == true); }
 

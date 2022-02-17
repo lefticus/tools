@@ -65,6 +65,8 @@ struct simple_stack_vector {
     return crbegin();
   }
 
+  [[nodiscard]] constexpr bool empty() noexcept { return size_ == 0; }
+
   [[nodiscard]] constexpr iterator rend() noexcept { return data.rend(); }
 
   [[nodiscard]] constexpr const_iterator rend() const noexcept {

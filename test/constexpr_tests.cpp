@@ -77,7 +77,7 @@ constexpr auto make_vector_like()
 
 TEST_CASE("to_span produces an std::span from simple_stack_vector")
 {
-  CONSTEXPR auto result = lefticus::tools::to_span([]() { return make_vector_like(); });
+  CONSTEXPR const auto result = lefticus::tools::to_span([]() { return make_vector_like(); });
   static_assert(std::is_same_v<decltype(result), const std::span<const double>>);
   STATIC_REQUIRE(result[0] == 1.2);
   STATIC_REQUIRE(result.size() == 3);
@@ -98,9 +98,11 @@ constexpr auto make_string_like()
   return result;
 }
 
+TEST_CASE("can make simple_stack_string") { [[maybe_unused]] CONSTEXPR auto result = make_string_like(); }
+
 TEST_CASE("to_string_view produces an std::string_view from simple_stack_string")
 {
-  CONSTEXPR auto result = lefticus::tools::to_string_view([]() { return make_string_like(); });
+  CONSTEXPR const auto result = lefticus::tools::to_string_view([]() { return make_string_like(); });
   static_assert(std::is_same_v<decltype(result), const std::string_view>);
   STATIC_REQUIRE(result[0] == 'H');
   STATIC_REQUIRE(result.size() == 6);

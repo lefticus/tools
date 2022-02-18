@@ -48,8 +48,6 @@ TEST_CASE("Cooperative multi tasking") // NOLINT (cognitive complexity)
 
   Machine machine;
 
-  std::string::traits_type::eof();
-
   auto CPU = [state = 0, &machine, op = OpCodes::NOP]() mutable {
     lambda_co_begin(state);
 

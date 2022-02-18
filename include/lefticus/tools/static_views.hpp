@@ -39,6 +39,7 @@ template<typename Value> struct oversized_array
 {
   std::array<Value, oversized_size> data{};
   std::size_t size{};
+
   using value_type = Value;
 
   constexpr auto begin() const noexcept { return data.begin(); }

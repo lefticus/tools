@@ -66,8 +66,9 @@ struct basic_simple_stack_string
   template<typename Value> constexpr value_type &push_back(Value &&value)
   {
     if (size_ == Capacity) { throw std::length_error("push_back would exceed static capacity"); }
-    data_[size_ + 1] = 0;
-    return data_[size_++] = std::forward<Value>(value);
+    data_[size_ + 1] = 0; // null terminator
+    data_[size_] = std::forward<Value>(value);
+    return data_[size_++];
   }
 
   template<typename... Param> constexpr value_type &emplace_back(Param &&...param)

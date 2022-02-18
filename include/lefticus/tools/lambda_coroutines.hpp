@@ -28,8 +28,7 @@ constexpr void lambda_co_status_check(ParamType &value)
 
 #define lambda_co_begin(state_variable)                        \
   ::lefticus::tools::lambda_coroutines::lambda_co_status_check(state_variable); \
-  auto &coroutine_lambda_internal_state_ref = state_variable;  \
-  switch (state_variable) {                                    \
+  switch (auto &coroutine_lambda_internal_state_ref = state_variable; coroutine_lambda_internal_state_ref) {  \
   default:                                                     \
   case 0:
 
@@ -125,11 +124,13 @@ template<typename Lambda>
       }
     };
 
+    // cppcheck-suppress functionConst
     [[nodiscard]] constexpr auto begin() noexcept
     {
       return Iterator{ generator, position, length, stride, false };
     }
 
+    // cppcheck-suppress functionConst
     [[nodiscard]] constexpr auto end() noexcept
     {
       return Iterator{ generator, position, length, stride, true };
@@ -185,11 +186,13 @@ template<typename Lambda>
       }
     };
 
+    // cppcheck-suppress functionConst
     [[nodiscard]] constexpr auto begin() noexcept
     {
       return Iterator{ generator, false };
     }
 
+    // cppcheck-suppress functionConst
     [[nodiscard]] constexpr auto end() noexcept
     {
       return Iterator{ generator, true };

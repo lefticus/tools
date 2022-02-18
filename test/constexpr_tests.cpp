@@ -4,10 +4,12 @@
 #include <lefticus/tools/non_promoting_ints.hpp>
 #include <lefticus/tools/lambda_coroutines.hpp>
 #include <lefticus/tools/simple_stack_vector.hpp>
+#include <lefticus/tools/simple_stack_string.hpp>
 
 #ifdef CATCH_CONFIG_RUNTIME_STATIC_REQUIRE
 #define CONSTEXPR
 #else
+//NOLINTNEXTLINE
 #define CONSTEXPR constexpr
 #endif
 
@@ -29,6 +31,7 @@ TEST_CASE("consteval_invoke produces a constant expression")
   STATIC_REQUIRE(value == 6); // NOLINT
 }
 
+#if __cpp_lib_constexpr_string >= 201907L
 constexpr std::string make_string()
 {
   std::string result;
@@ -39,13 +42,15 @@ constexpr std::string make_string()
 }
 
 
-TEST_CASE("to_string_view produces a std::string_view")
+TEST_CASE("to_string_view produces a std::string_view from std::string")
 {
   constexpr static auto result = lefticus::tools::to_string_view([]() { return make_string(); });
   static_assert(std::is_same_v<decltype(result), const std::string_view>);
   STATIC_REQUIRE(result == "Hello World Test Long String");
 }
+#endif
 
+#if __cpp_lib_constexpr_vector >= 201907L
 constexpr std::vector<double> make_vector()
 {
   std::vector result{1.2, 2.4};
@@ -53,7 +58,7 @@ constexpr std::vector<double> make_vector()
   return result;
 }
 
-TEST_CASE("to_span produces an std::span")
+TEST_CASE("to_span produces an std::span from std::vector")
 {
   constexpr static auto result = lefticus::tools::to_span([]() { return make_vector(); });
   static_assert(std::is_same_v<decltype(result), const std::span<const double>>);
@@ -61,6 +66,47 @@ TEST_CASE("to_span produces an std::span")
   STATIC_REQUIRE(result.size() == 3);
 
 }
+#endif
+
+constexpr auto make_vector_like()
+{
+  lefticus::tools::simple_stack_vector<double, 10> result{ 1.2, 2.4 };
+  result.push_back(3.6);
+  return result;
+}
+
+TEST_CASE("to_span produces an std::span from simple_stack_vector")
+{
+  CONSTEXPR auto result = lefticus::tools::to_span([]() { return make_vector_like(); });
+  static_assert(std::is_same_v<decltype(result), const std::span<const double>>);
+  STATIC_REQUIRE(result[0] == 1.2);
+  STATIC_REQUIRE(result.size() == 3);
+}
+
+TEST_CASE("to_right_sized_array produces an array of the correct size")
+{
+  CONSTEXPR auto result = lefticus::tools::to_right_sized_array([]() { return make_vector_like(); });
+  STATIC_REQUIRE(result[0] == 1.2);
+  STATIC_REQUIRE(result.size() == 3);
+  STATIC_REQUIRE(sizeof(result) == 3 * sizeof(double));
+}
+
+constexpr auto make_string_like()
+{
+  lefticus::tools::simple_stack_string<10> result{ "Hello" };
+  result.push_back('a');
+  return result;
+}
+
+TEST_CASE("to_string_view produces an std::string_view from simple_stack_string")
+{
+  CONSTEXPR auto result = lefticus::tools::to_string_view([]() { return make_string_like(); });
+  static_assert(std::is_same_v<decltype(result), const std::string_view>);
+  STATIC_REQUIRE(result[0] == 'H');
+  STATIC_REQUIRE(result.size() == 6);
+}
+
+
 
 TEST_CASE("npint UDLs work") {
   using namespace lefticus::tools::literals;
@@ -100,7 +146,7 @@ TEST_CASE("2_np8 << 3 == 26")
 {
   using namespace lefticus::tools::literals;
 
-  STATIC_REQUIRE(2_np8 << 3 == 16_np8);
+  STATIC_REQUIRE((2_np8 << 3) == 16_np8);
 }
 
 

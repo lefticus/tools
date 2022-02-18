@@ -1,28 +1,12 @@
-#ifndef LEFTICUS_TOOLS_SIMPLE_STACK_VECTOR_HPP
-#define LEFTICUS_TOOLS_SIMPLE_STACK_VECTOR_HPP
+#ifndef LEFTICUS_TOOLS_SIMPLE_STACK_STRING_HPP
+#define LEFTICUS_TOOLS_SIMPLE_STACK_STRING_HPP
 
 
 namespace lefticus::tools {
-
-#include <array>
-#include <cstdint>
-#include <stdexcept>
-
-template<typename T>
-concept default_constructible = std::is_default_constructible_v<T>;
-
-// changes from std::vector
-//  * capacity if fixed at compile-time
-//  * it never allocates
-//  * items must be default constructible
-//  * items are never destroyed until the entire stack_vector
-//    is destroyed.
-//  * iterators are never invalidated
-//  * capacity() and max_size() are now static functions
-//  * should be fully C++17 usable within constexpr
-// TODO add C++17 binary to test this simple_stack_vector
-template<default_constructible Contained, std::size_t Capacity> struct simple_stack_vector
+template<typename Contained, std::size_t Capacity, typename Traits = std::char_traits<Contained>>
+struct basic_simple_stack_string
 {
+  using traits_type = Traits;
   using value_type = Contained;
   using size_type = std::size_t;
   using difference_type = std::ptrdiff_t;
@@ -35,11 +19,15 @@ template<default_constructible Contained, std::size_t Capacity> struct simple_st
   using reverse_iterator = typename data_type::reverse_iterator;
   using const_reverse_iterator = typename data_type::const_reverse_iterator;
 
-  constexpr simple_stack_vector() = default;
-  constexpr explicit simple_stack_vector(std::initializer_list<value_type> values) : size_{ values.size() }
+  constexpr explicit basic_simple_stack_string(const value_type *str)
   {
-    size_type index = 0;
-    for (const auto &value : values) { data_[index++] = value; }
+    const size_type length{ traits_type::length(str) };
+
+    resize(length);
+
+    for (size_type index = 0; index < length; ++index) {
+      at(index) = *std::next(str, static_cast<difference_type>(index));
+    }
   }
 
   [[nodiscard]] constexpr iterator begin() noexcept { return data_.begin(); }
@@ -47,7 +35,10 @@ template<default_constructible Contained, std::size_t Capacity> struct simple_st
   [[nodiscard]] constexpr const_iterator begin() const noexcept { return data_.cbegin(); }
   [[nodiscard]] constexpr const_iterator cbegin() const noexcept { return data_.cbegin(); }
 
-  [[nodiscard]] constexpr iterator end() noexcept { return std::next(data_.begin(), size_); }
+  [[nodiscard]] constexpr iterator end() noexcept
+  {
+    return std::next(data_.begin(), static_cast<difference_type>(size_));
+  }
 
   [[nodiscard]] constexpr const_iterator end() const noexcept
   {
@@ -75,12 +66,14 @@ template<default_constructible Contained, std::size_t Capacity> struct simple_st
   template<typename Value> constexpr value_type &push_back(Value &&value)
   {
     if (size_ == Capacity) { throw std::length_error("push_back would exceed static capacity"); }
+    data_[size_ + 1] = 0;
     return data_[size_++] = std::forward<Value>(value);
   }
 
   template<typename... Param> constexpr value_type &emplace_back(Param &&...param)
   {
     if (size_ == Capacity) { throw std::length_error("emplace_back would exceed static capacity"); }
+    data_[size_ + 1] = 0;
     return data_[size_++] = data_type(std::forward<Param>(param)...);
   }
 
@@ -130,14 +123,20 @@ template<default_constructible Contained, std::size_t Capacity> struct simple_st
         size_ = new_size;
         auto new_end = end();
         while (old_end != new_end) {
-          *old_end = data_type{};
+          *old_end = value_type{};
           ++old_end;
         }
       }
     }
+
+    data_[size_] = 0;
   }
 
-  constexpr void pop_back() noexcept { --size_; }
+  constexpr void pop_back() noexcept
+  {
+    --size_;
+    data_[size_] = 0;
+  }
 
   // cppcheck-suppress functionStatic
   constexpr void shrink_to_fit() noexcept
@@ -151,7 +150,9 @@ private:
   data_type data_{};
   size_type size_{};
 };
-}// namespace lefticus::tools
 
+template<std::size_t Capacity> using simple_stack_string = basic_simple_stack_string<char, Capacity>;
+
+}// namespace lefticus::tools
 
 #endif

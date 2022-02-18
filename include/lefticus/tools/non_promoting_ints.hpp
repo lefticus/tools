@@ -10,6 +10,7 @@ struct int_np {
   using value_type = Type;
 
   // if it's the proper type, make it easy to convert
+  // cppcheck-suppress noExplicitConstructor
   constexpr int_np(value_type value_) noexcept : value{value_} {}
 
   // you must use `from` if you want to create an int_np with a different input

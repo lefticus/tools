@@ -11,7 +11,7 @@
 
 
 
-TEST_CASE("Generate infinite sequence")
+TEST_CASE("Generate infinite sequence") //NOLINT (cognitive complexity)
 {
   enum struct directions { Left, Right, Up, Down };
 
@@ -36,7 +36,7 @@ TEST_CASE("Generate infinite sequence")
   REQUIRE(next_direction() == directions::Right);
 }
 
-TEST_CASE("Cooperative multi tasking")
+TEST_CASE("Cooperative multi tasking") // NOLINT (cognitive complexity)
 {
   enum OpCodes : std::uint8_t { ADD = 0, STA = 1, NOP = 2 };
   struct Machine
@@ -48,19 +48,21 @@ TEST_CASE("Cooperative multi tasking")
 
   Machine machine;
 
+  std::string::traits_type::eof();
+
   auto CPU = [state = 0, &machine, op = OpCodes::NOP]() mutable {
     lambda_co_begin(state);
 
     while (true) {
-      op = static_cast<OpCodes>(machine.RAM[machine.PC]);
+      op = static_cast<OpCodes>(machine.RAM.at(machine.PC));
       ++machine.PC;
       if (op == OpCodes::STA) {
         lambda_co_yield();
-        machine.A = machine.RAM[machine.PC++];
+        machine.A = machine.RAM.at(machine.PC++);
         lambda_co_yield();
       } else if (op == OpCodes::ADD) {
         lambda_co_yield();
-        machine.A += machine.RAM[machine.PC++];
+        machine.A += machine.RAM.at(machine.PC++);
         lambda_co_yield();
       } else if (op == OpCodes::NOP) {
         lambda_co_yield();

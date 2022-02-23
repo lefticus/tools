@@ -5,6 +5,7 @@
 #include <lefticus/tools/lambda_coroutines.hpp>
 #include <lefticus/tools/simple_stack_vector.hpp>
 #include <lefticus/tools/simple_stack_string.hpp>
+#include <lefticus/tools/curry.hpp>
 
 #ifdef CATCH_CONFIG_RUNTIME_STATIC_REQUIRE
 #define CONSTEXPR
@@ -211,4 +212,15 @@ TEST_CASE("lambda_coroutines are constexpr capable", "[constexpr]")
 #endif
 
 TEST_CASE("simple_stack_vector starts empty") { STATIC_REQUIRE(lefticus::tools::simple_stack_vector<int, 10>{}.empty() == true); }
+
+
+TEST_CASE("curry lambda")
+{
+  CONSTEXPR auto func = [](int x, int y, int z) { return x + y + z; };
+
+  STATIC_REQUIRE(lefticus::tools::curry(func, 1, 2, 3) == 6);
+  STATIC_REQUIRE(lefticus::tools::curry(func)(1, 2, 3) == 6);
+  STATIC_REQUIRE(lefticus::tools::curry(func, 1)(2, 3) == 6);
+  STATIC_REQUIRE(lefticus::tools::curry(func, 1, 2)(3) == 6);
+}
 

@@ -5,6 +5,7 @@
 #include <utility>
 
 #include <lefticus/tools/lambda_coroutines.hpp>
+#include <lefticus/tools/curry.hpp>
 
 #include <catch2/catch.hpp>
 
@@ -82,4 +83,26 @@ TEST_CASE("Cooperative multi tasking") // NOLINT (cognitive complexity)
   CPU();
   REQUIRE(machine.PC == 4);
   REQUIRE(machine.A == 25);
+}
+
+
+struct Data
+{
+  std::string value;
+};
+
+TEST_CASE("curry member object pointer w/return reference forwarding")
+{
+  Data d;
+  auto member = lefticus::tools::curry(&Data::value);
+
+  member(&d) = "Hello World";
+
+  REQUIRE(d.value == "Hello World");
+
+  std::string &value = member(&d);
+
+  value = "A long string to test";
+
+  REQUIRE(member(&d) == "A long string to test");
 }

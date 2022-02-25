@@ -12,7 +12,7 @@
 
 
 
-TEST_CASE("Generate infinite sequence") //NOLINT (cognitive complexity)
+TEST_CASE("Generate infinite sequence", "[lambda_coroutines]") //NOLINT (cognitive complexity)
 {
   enum struct directions { Left, Right, Up, Down };
 

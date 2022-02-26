@@ -2,11 +2,12 @@
 #define LEFTICUS_TOOLS_SIMPLE_STACK_VECTOR_HPP
 
 
-namespace lefticus::tools {
-
 #include <array>
 #include <cstdint>
 #include <stdexcept>
+
+
+namespace lefticus::tools {
 
 template<typename T>
 concept default_constructible = std::is_default_constructible_v<T>;

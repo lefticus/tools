@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <string>
+#include <array>
 
 namespace lefticus::tools {
 template<typename CharType, std::size_t TotalCapacity, typename Traits = std::char_traits<CharType>>

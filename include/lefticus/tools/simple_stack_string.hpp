@@ -15,7 +15,7 @@ struct basic_simple_stack_string
   using reference = value_type &;
   using const_reference = const value_type &;
   using data_type = std::array<value_type, TotalCapacity>;
-  
+
   using iterator = typename data_type::iterator;
   using const_iterator = typename data_type::const_iterator;
   using reverse_iterator = typename data_type::reverse_iterator;
@@ -113,12 +113,9 @@ struct basic_simple_stack_string
     return data_[idx];
   }
 
-  constexpr basic_simple_stack_string& operator+=(const std::string_view sv)
+  constexpr basic_simple_stack_string &operator+=(const std::string_view sv)
   {
-    for(const auto c : sv)
-    {
-      push_back(c);
-    }
+    for (const auto c : sv) { push_back(c); }
 
     return *this;
   }
@@ -130,7 +127,9 @@ struct basic_simple_stack_string
   // cppcheck-suppress functionStatic
   constexpr void reserve(size_type new_capacity)
   {
-    if (new_capacity + 1 > TotalCapacity) { throw std::length_error("new capacity would exceed max_size for stack_vector"); }
+    if (new_capacity + 1 > TotalCapacity) {
+      throw std::length_error("new capacity would exceed max_size for stack_vector");
+    }
   }
 
   // cppcheck-suppress functionStatic
@@ -182,7 +181,7 @@ private:
 };
 
 template<typename CharType, std::size_t Size>
-basic_simple_stack_string(const CharType(&)[Size]) -> basic_simple_stack_string<CharType, Size>;
+basic_simple_stack_string(const CharType (&)[Size]) -> basic_simple_stack_string<CharType, Size>;
 
 template<typename CharType, std::size_t Size>
 [[nodiscard]] constexpr bool operator==(const basic_simple_stack_string<CharType, Size> &lhs,
@@ -228,7 +227,6 @@ template<typename CharType, std::size_t Size>
 }
 
 
-
 template<typename CharType, std::size_t LHSSize, std::size_t RHSSize>
 [[nodiscard]] constexpr basic_simple_stack_string<CharType, LHSSize + RHSSize - 1>
   operator+(const basic_simple_stack_string<CharType, LHSSize> &lhs, const CharType (&rhs)[RHSSize])
@@ -248,8 +246,9 @@ template<typename CharType, std::size_t LHSSize, std::size_t RHSSize>
 }
 
 template<typename CharType, std::size_t LHSSize, std::size_t RHSSize>
-[[nodiscard]] constexpr basic_simple_stack_string<CharType, LHSSize + RHSSize - 1>
-  operator+( const basic_simple_stack_string<CharType, LHSSize> &lhs, const basic_simple_stack_string<CharType, RHSSize> &rhs)
+[[nodiscard]] constexpr basic_simple_stack_string<CharType, LHSSize + RHSSize - 1> operator+(
+  const basic_simple_stack_string<CharType, LHSSize> &lhs,
+  const basic_simple_stack_string<CharType, RHSSize> &rhs)
 {
   basic_simple_stack_string<CharType, LHSSize + RHSSize - 1> result{ lhs };
   result += rhs;
@@ -259,13 +258,13 @@ template<typename CharType, std::size_t LHSSize, std::size_t RHSSize>
 
 template<std::size_t TotalCapacity> using simple_stack_string = basic_simple_stack_string<char, TotalCapacity>;
 
-namespace literals{
+namespace literals {
   // not actually a literal, but best we can do with C++17 support
-  template<typename CharType, std::size_t Size>
-  [[nodiscard]] constexpr auto to_sss(const CharType(&data)[Size]) {
-    return basic_simple_stack_string{data};
+  template<typename CharType, std::size_t Size> [[nodiscard]] constexpr auto to_sss(const CharType (&data)[Size])
+  {
+    return basic_simple_stack_string{ data };
   }
-}
+}// namespace literals
 
 }// namespace lefticus::tools
 

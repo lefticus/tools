@@ -1,15 +1,14 @@
 #include <catch2/catch.hpp>
-#include <lefticus/tools/static_views.hpp>
-#include <lefticus/tools/simple_stack_vector.hpp>
 #include <lefticus/tools/simple_stack_string.hpp>
+#include <lefticus/tools/simple_stack_vector.hpp>
+#include <lefticus/tools/static_views.hpp>
 
 #ifdef CATCH_CONFIG_RUNTIME_STATIC_REQUIRE
 #define CONSTEXPR
 #else
-//NOLINTNEXTLINE
+// NOLINTNEXTLINE
 #define CONSTEXPR constexpr
 #endif
-
 
 
 #if __cpp_lib_constexpr_string >= 201907L
@@ -34,7 +33,7 @@ TEST_CASE("to_string_view produces a std::string_view from std::string")
 #if __cpp_lib_constexpr_vector >= 201907L
 constexpr std::vector<double> make_vector()
 {
-  std::vector result{1.2, 2.4};
+  std::vector result{ 1.2, 2.4 };
   result.push_back(3.6);
   return result;
 }
@@ -45,7 +44,6 @@ TEST_CASE("to_span produces an std::span from std::vector")
   static_assert(std::is_same_v<decltype(result), const std::span<const double>>);
   STATIC_REQUIRE(result[0] == 1.2);
   STATIC_REQUIRE(result.size() == 3);
-
 }
 #endif
 
@@ -88,7 +86,3 @@ TEST_CASE("to_string_view produces an std::string_view from simple_stack_string"
   STATIC_REQUIRE(result[0] == 'H');
   STATIC_REQUIRE(result.size() == 6);
 }
-
-
-
-

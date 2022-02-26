@@ -1,10 +1,10 @@
 #ifndef LEFTICUS_TOOLS_STATIC_VIEWS_HPP
 #define LEFTICUS_TOOLS_STATIC_VIEWS_HPP
 
+#include <algorithm>
+#include <array>
 #include <span>
 #include <string_view>
-#include <array>
-#include <algorithm>
 
 namespace lefticus::tools {
 
@@ -30,7 +30,7 @@ template<typename Callable>
 concept creates_string_like = requires(const Callable &callable)
 {
   requires creates_iterable<Callable>;
-  //TODO this check needs to be better
+  // TODO this check needs to be better
   typename std::decay_t<decltype(callable())>::traits_type;
 };
 
@@ -64,7 +64,8 @@ consteval auto to_right_sized_array(creates_iterable auto callable)
   return result;
 }
 
-template<auto Data> consteval const auto &make_static() {
+template<auto Data> consteval const auto &make_static()
+{
   // this is fully allowed - Data is made into a static by the compiler
   // cppcheck-suppress returnTempReference
   return Data;

@@ -159,20 +159,18 @@ private:
 
 
 template<typename Contained, std::size_t LHSSize, std::size_t RHSSize>
-[[nodiscard]] constexpr bool operator==(const simple_stack_vector<Contained, LHSSize> &lhs, const simple_stack_vector<Contained, RHSSize> &rhs)
+[[nodiscard]] constexpr bool operator==(const simple_stack_vector<Contained, LHSSize> &lhs,
+  const simple_stack_vector<Contained, RHSSize> &rhs)
 {
   if (lhs.size() == rhs.size()) {
     for (std::size_t idx = 0; idx < lhs.size(); ++idx) {
-      if (lhs[idx] != rhs[idx]) {
-        return false;
-      }
+      if (lhs[idx] != rhs[idx]) { return false; }
     }
     return true;
   }
 
   return false;
 }
-
 
 
 }// namespace lefticus::tools

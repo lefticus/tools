@@ -1,3 +1,4 @@
+#include <array>
 #include <catch2/catch.hpp>
 #include <lefticus/tools/lambda_coroutines.hpp>
 

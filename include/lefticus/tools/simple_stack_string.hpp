@@ -1,6 +1,7 @@
 #ifndef LEFTICUS_TOOLS_SIMPLE_STACK_STRING_HPP
 #define LEFTICUS_TOOLS_SIMPLE_STACK_STRING_HPP
 
+#include <array>
 #include <cstdint>
 #include <string>
 

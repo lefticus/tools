@@ -106,4 +106,74 @@ TEST_CASE("simple_stack_string reverse iterators work")
   STATIC_REQUIRE(incrementd_3 == "bcde");
 }
 
+TEST_CASE("simple_stack_string + char string literal")
+{
+  CONSTEXPR lefticus::tools::simple_stack_string<10> str{"Hello"};
+  CONSTEXPR auto hello_world = str + " World";
+  STATIC_REQUIRE(hello_world.size() == 11);
+  STATIC_REQUIRE(hello_world.capacity() == 15);
+}
+
+
+TEST_CASE("char string literal + simple_stack_string")
+{
+  CONSTEXPR lefticus::tools::simple_stack_string<10> str{" World"};
+  CONSTEXPR auto hello_world = "Hello" + str;
+  STATIC_REQUIRE(hello_world.size() == 11);
+  STATIC_REQUIRE(hello_world.capacity() == 14);
+}
+
+TEST_CASE("simple_stack_string + simple_stack_string")
+{
+  CONSTEXPR lefticus::tools::simple_stack_string<10> str1{"Hello"};
+  CONSTEXPR lefticus::tools::simple_stack_string<10> str2{" World"};
+  CONSTEXPR auto hello_world = str1 + str2;
+  STATIC_REQUIRE(hello_world.size() == 11);
+  STATIC_REQUIRE(hello_world.capacity() == 18);
+}
+
+TEST_CASE("basic_simple_stack_string CTAD")
+{
+  CONSTEXPR lefticus::tools::basic_simple_stack_string str1{"Hello"};
+  STATIC_REQUIRE(str1.size() == 5);
+  STATIC_REQUIRE(str1.capacity() == 5);
+  STATIC_REQUIRE(decltype(str1)::total_capacity == 6);
+}
+
+
+TEST_CASE("simple_stack_string to_sss")
+{
+  using namespace lefticus::tools::literals;
+  CONSTEXPR auto str1 = to_sss("Hello");
+  STATIC_REQUIRE(str1.size() == 5);
+  STATIC_REQUIRE(str1.capacity() == 5);
+  STATIC_REQUIRE(decltype(str1)::total_capacity == 6);
+}
+
+TEST_CASE("simple_stack_string to_sss + to_sss")
+{
+  using namespace lefticus::tools::literals;
+  CONSTEXPR auto str1 = to_sss("Hello") + to_sss(" World");
+  STATIC_REQUIRE(str1.size() == 11);
+  STATIC_REQUIRE(str1.capacity() == 11);
+  STATIC_REQUIRE(decltype(str1)::total_capacity == 12);
+}
+
+
+
+TEST_CASE("simple_stack_string simple_stack_string == string_view, sv == sss")
+{
+  using namespace lefticus::tools::literals;
+  STATIC_REQUIRE(to_sss("Hello") == std::string_view{"Hello"});
+  STATIC_REQUIRE(std::string_view{"Hello"} == to_sss("Hello"));
+}
+
+TEST_CASE("simple_stack_string simple_stack_string == const char *, const char * == sss")
+{
+  using namespace lefticus::tools::literals;
+  STATIC_REQUIRE(to_sss("Hello") == "Hello");
+  STATIC_REQUIRE("Hello" == to_sss("Hello"));
+}
+
+
 

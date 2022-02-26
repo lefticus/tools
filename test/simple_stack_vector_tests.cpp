@@ -29,7 +29,10 @@ TEST_CASE("simple_stack_vector const reverse iterators work")
   };
 
   CONSTEXPR auto reversed_1 = reverse(lefticus::tools::simple_stack_vector<int, 10>{});
-  STATIC_REQUIRE(reversed_1 == lefticus::tools::simple_stack_vector<int,1>{});
+  STATIC_REQUIRE(reversed_1 == lefticus::tools::simple_stack_vector<int,1>{}); // NOLINT (check for empty)
+  STATIC_REQUIRE(reversed_1 == lefticus::tools::simple_stack_vector<int,0>{}); // NOLINT (check for empty)
+  STATIC_REQUIRE(reversed_1.empty());
+
 
   CONSTEXPR auto reversed_2 = reverse(lefticus::tools::simple_stack_vector<int, 10>{1});
   STATIC_REQUIRE(reversed_2 == lefticus::tools::simple_stack_vector<int,1>{1});
@@ -49,7 +52,8 @@ TEST_CASE("simple_stack_vector c-reverse iterators work")
   };
 
   CONSTEXPR auto reversed_1 = reverse(lefticus::tools::simple_stack_vector<int, 10>{});
-  STATIC_REQUIRE(reversed_1 == lefticus::tools::simple_stack_vector<int,0>{});
+  STATIC_REQUIRE(reversed_1 == lefticus::tools::simple_stack_vector<int,0>{}); // NOLINT (check for empty)
+  STATIC_REQUIRE(reversed_1.empty());
 
   CONSTEXPR auto reversed_2 = reverse(lefticus::tools::simple_stack_vector<int, 10>{1});
   STATIC_REQUIRE(reversed_2 == lefticus::tools::simple_stack_vector<int,1>{1});
@@ -62,7 +66,6 @@ TEST_CASE("simple_stack_vector c-reverse iterators work")
 TEST_CASE("simple_stack_vector reverse iterators work")
 {
   const auto increment = [](auto input) {
-    lefticus::tools::simple_stack_vector<int, 10> output;
     for (auto itr = input.rbegin(); itr != input.rend(); ++itr) {
       ++(*itr);
     }
@@ -70,7 +73,8 @@ TEST_CASE("simple_stack_vector reverse iterators work")
   };
 
   CONSTEXPR auto incrementd_1 = increment(lefticus::tools::simple_stack_vector<int,10>{});
-  STATIC_REQUIRE(incrementd_1 == lefticus::tools::simple_stack_vector<int,0>{});
+  STATIC_REQUIRE(incrementd_1 == lefticus::tools::simple_stack_vector<int,0>{}); // NOLINT (check for empty)
+  STATIC_REQUIRE(incrementd_1.empty()); // NOLINT (check for empty)
 
   CONSTEXPR auto incrementd_2 = increment(lefticus::tools::simple_stack_vector<int,10>{1});
   STATIC_REQUIRE(incrementd_2 == lefticus::tools::simple_stack_vector<int,1>{2});

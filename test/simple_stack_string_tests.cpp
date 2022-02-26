@@ -56,7 +56,8 @@ TEST_CASE("simple_stack_string const reverse iterators work")
   };
 
   CONSTEXPR auto reversed_1 = reverse(lefticus::tools::simple_stack_string<10>{""});
-  STATIC_REQUIRE(reversed_1 == "");
+  STATIC_REQUIRE(reversed_1 == ""); // NOLINT (check for empty)
+  STATIC_REQUIRE(reversed_1.empty());
 
   CONSTEXPR auto reversed_2 = reverse(lefticus::tools::simple_stack_string<10>{"a"});
   STATIC_REQUIRE(reversed_2 == "a");
@@ -75,8 +76,9 @@ TEST_CASE("simple_stack_string c-reverse iterators work")
     return output;
   };
 
-  CONSTEXPR auto reversed_1 = reverse(lefticus::tools::simple_stack_string<10>{""});
-  STATIC_REQUIRE(reversed_1 == "");
+  CONSTEXPR auto reversed_1 = reverse(lefticus::tools::simple_stack_string<10>{""}); // NOLINT (check for empty)
+  STATIC_REQUIRE(reversed_1 == ""); // NOLINT (check for empty)
+  STATIC_REQUIRE(reversed_1.empty());
 
   CONSTEXPR auto reversed_2 = reverse(lefticus::tools::simple_stack_string<10>{"a"});
   STATIC_REQUIRE(reversed_2 == "a");
@@ -89,15 +91,16 @@ TEST_CASE("simple_stack_string c-reverse iterators work")
 TEST_CASE("simple_stack_string reverse iterators work")
 {
   const auto increment = [](auto input) {
-    lefticus::tools::simple_stack_string<10> output;
     for (auto itr = input.rbegin(); itr != input.rend(); ++itr) {
       ++(*itr);
     }
     return input;
   };
 
-  CONSTEXPR auto incrementd_1 = increment(lefticus::tools::simple_stack_string<10>{""});
-  STATIC_REQUIRE(incrementd_1 == "");
+  CONSTEXPR auto incrementd_1 = increment(lefticus::tools::simple_stack_string<10>{""}); // NOLINT (check for empty)
+  STATIC_REQUIRE(incrementd_1 == ""); // NOLINT (check for empty)
+  STATIC_REQUIRE(incrementd_1.empty());
+
 
   CONSTEXPR auto incrementd_2 = increment(lefticus::tools::simple_stack_string<10>{"a"});
   STATIC_REQUIRE(incrementd_2 == "b");

@@ -24,9 +24,9 @@ struct basic_simple_stack_string
   static constexpr auto total_capacity = TotalCapacity;
 
   constexpr basic_simple_stack_string() = default;
-  constexpr basic_simple_stack_string(nullptr_t) = delete;
+  constexpr basic_simple_stack_string(std::nullptr_t) = delete;
 
-  constexpr basic_simple_stack_string(std::initializer_list<value_type> data)
+  constexpr explicit basic_simple_stack_string(std::initializer_list<value_type> data)
   {
     for (const auto &c : data) {
       push_back(c);// push_back is very cheap and this is simple

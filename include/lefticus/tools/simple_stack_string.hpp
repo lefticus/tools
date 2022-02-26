@@ -1,9 +1,9 @@
 #ifndef LEFTICUS_TOOLS_SIMPLE_STACK_STRING_HPP
 #define LEFTICUS_TOOLS_SIMPLE_STACK_STRING_HPP
 
+#include <array>
 #include <cstdint>
 #include <string>
-#include <array>
 
 namespace lefticus::tools {
 template<typename CharType, std::size_t TotalCapacity, typename Traits = std::char_traits<CharType>>

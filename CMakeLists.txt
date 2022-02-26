@@ -50,6 +50,10 @@ if(BUILDING_MULTI_CONFIG)
   endif()
 endif()
 
+# Disable CPPCHECK by default - older versions have far too
+# many false positives with this code
+set(ENABLE_CPPCHECK_DEFAULT FALSE CACHE BOOL "CppCheck disabled by default")
+set(ENABLE_DEVELOPER_MODE TRUE CACHE BOOL "Developer mode by default")
 
 include(${_project_options_SOURCE_DIR}/src/DynamicProjectOptions.cmake)
 
@@ -85,12 +89,10 @@ dynamic_project_options(
   # if a file does not have an internalAstError, we get an unmatchedSuppression error
   --suppress=unmatchedSuppression
   --suppress=passedByValue
-  --inconclusive
-  )
+  --inconclusive)
 
 target_compile_features(project_options INTERFACE cxx_std_${CMAKE_CXX_STANDARD})
 target_include_directories(project_options INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
-
 
 # Adding the tests:
 option(ENABLE_TESTING "Enable the tests" ON)

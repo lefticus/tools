@@ -110,3 +110,28 @@ TEST_CASE("simple_stack_vector emplace_back works")
   STATIC_REQUIRE(vec[0] == std::pair<int, int>{1,2});
   STATIC_REQUIRE(vec[1] == std::pair<int, int>{ 3, 5 });
 }
+
+TEST_CASE("simple_stack_vector end / cend work") {
+  const auto create = []() {
+    lefticus::tools::simple_stack_vector<int, 10> vec{1,2,3};
+    return vec;
+  };
+
+  // this should cover the const/constexpr/and non-const cases
+  CONSTEXPR auto vec = create(); // imlicit const in the CONSTEXPR build, non-const in the non-CONSTEXPR build
+  STATIC_REQUIRE(vec.size() == 3);
+  STATIC_REQUIRE(std::distance(vec.begin(), vec.end()) == 3);
+
+  // but we still need a test to cover the non-const constexpr use case of begin()/end() and specifically calls to cbegin/cend
+  STATIC_REQUIRE(std::distance(vec.cbegin(), vec.cend()) == 3);
+
+
+  const auto get_size_from_iterators = []() {
+    lefticus::tools::simple_stack_vector<int, 10> vec{ 1, 2, 3 };
+    // these will be non-const access to begin and end, even in the constexpr tests
+    return std::distance(vec.begin(), vec.end());
+  };
+
+  STATIC_REQUIRE(get_size_from_iterators() == 3);
+
+}

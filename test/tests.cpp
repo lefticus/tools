@@ -7,6 +7,7 @@
 #include <lefticus/tools/curry.hpp>
 #include <lefticus/tools/lambda_coroutines.hpp>
 #include <lefticus/tools/simple_stack_string.hpp>
+#include <lefticus/tools/simple_stack_vector.hpp>
 #include <lefticus/tools/flat_map.hpp>
 
 #include <catch2/catch.hpp>
@@ -124,3 +125,29 @@ TEST_CASE("flat_map basic test")
 }
 
 
+constexpr auto make_map()
+{
+  using namespace std::literals::string_view_literals;
+
+  lefticus::tools::flat_map<std::string_view, int, lefticus::tools::simple_stack_vector<std::pair<std::string_view, int>, 10>> m;
+
+  m["black"sv] = 7;
+  m["blue"sv] = 3;
+  m["cyan"sv] = 5;
+  m["green"sv] = 2;
+  m["magenta"sv] = 6;
+  m["red"sv] = 1;
+  m["white"sv] = 8;
+  m["yellow"sv] = 4;
+
+  return m;
+}
+
+TEST_CASE("flat_map with simple_stack_vector backing works")
+{
+    // static const auto map = std::map<std::string_view, int>{color_values.begin(), color_values.end()};
+    static constexpr auto map = make_map();
+    // Map<std::string_view, int, color_values.size()>{{color_values}};
+
+    [[maybe_unused]] const auto result = map.at("green");
+}

@@ -2,11 +2,12 @@
 #define LEFTICUS_TOOLS_SIMPLE_STACK_VECTOR_HPP
 
 
-namespace lefticus::tools {
-
 #include <array>
 #include <cstdint>
 #include <stdexcept>
+
+
+namespace lefticus::tools {
 
 template<typename T>
 concept default_constructible = std::is_default_constructible_v<T>;
@@ -56,21 +57,24 @@ template<default_constructible Contained, std::size_t Capacity> struct simple_st
 
   [[nodiscard]] constexpr const_iterator cend() const noexcept { return end(); }
 
-  [[nodiscard]] constexpr iterator rbegin() noexcept { return std::next(data_.rbegin(), Capacity - size_); }
-
-  [[nodiscard]] constexpr const_iterator rbegin() const noexcept
+  [[nodiscard]] constexpr reverse_iterator rbegin() noexcept
   {
-    return std::next(data_.crbegin(), Capacity - size_);
+    return std::next(data_.rbegin(), static_cast<difference_type>(Capacity - size_));
   }
-  [[nodiscard]] constexpr const_iterator crbegin() const noexcept { return crbegin(); }
+
+  [[nodiscard]] constexpr const_reverse_iterator rbegin() const noexcept
+  {
+    return std::next(data_.crbegin(), static_cast<difference_type>(Capacity - size_));
+  }
+  [[nodiscard]] constexpr const_reverse_iterator crbegin() const noexcept { return rbegin(); }
 
   [[nodiscard]] constexpr bool empty() const noexcept { return size_ == 0; }
 
-  [[nodiscard]] constexpr iterator rend() noexcept { return data_.rend(); }
+  [[nodiscard]] constexpr reverse_iterator rend() noexcept { return data_.rend(); }
 
-  [[nodiscard]] constexpr const_iterator rend() const noexcept { return data_.crend(); }
+  [[nodiscard]] constexpr const_reverse_iterator rend() const noexcept { return data_.crend(); }
 
-  [[nodiscard]] constexpr const_iterator crend() const noexcept { return data_.crend(); }
+  [[nodiscard]] constexpr const_reverse_iterator crend() const noexcept { return data_.crend(); }
 
   template<typename Value> constexpr value_type &push_back(Value &&value)
   {
@@ -119,6 +123,7 @@ template<default_constructible Contained, std::size_t Capacity> struct simple_st
 
   [[nodiscard]] constexpr size_type size() const noexcept { return size_; }
 
+
   constexpr void resize(const size_type new_size)
   {
     if (new_size <= size_) {
@@ -152,6 +157,23 @@ private:
   data_type data_{};
   size_type size_{};
 };
+
+
+template<typename Contained, std::size_t LHSSize, std::size_t RHSSize>
+[[nodiscard]] constexpr bool operator==(const simple_stack_vector<Contained, LHSSize> &lhs,
+  const simple_stack_vector<Contained, RHSSize> &rhs)
+{
+  if (lhs.size() == rhs.size()) {
+    for (std::size_t idx = 0; idx < lhs.size(); ++idx) {
+      if (lhs[idx] != rhs[idx]) { return false; }
+    }
+    return true;
+  }
+
+  return false;
+}
+
+
 }// namespace lefticus::tools
 
 

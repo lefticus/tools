@@ -4,10 +4,9 @@
 #ifdef CATCH_CONFIG_RUNTIME_STATIC_REQUIRE
 #define CONSTEXPR
 #else
-//NOLINTNEXTLINE
+// NOLINTNEXTLINE
 #define CONSTEXPR constexpr
 #endif
-
 
 
 TEST_CASE("curry lambda")
@@ -19,4 +18,3 @@ TEST_CASE("curry lambda")
   STATIC_REQUIRE(lefticus::tools::curry(func, 1)(2, 3) == 6);
   STATIC_REQUIRE(lefticus::tools::curry(func, 1, 2)(3) == 6);
 }
-

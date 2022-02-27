@@ -17,7 +17,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # https://github.com/cpp-best-practices/project_options
 include(FetchContent)
 FetchContent_Declare(_project_options
-                     URL https://github.com/cpp-best-practices/project_options/archive/refs/tags/v0.15.1.zip)
+                     URL https://github.com/cpp-best-practices/project_options/archive/refs/tags/v0.17.0.zip)
 FetchContent_MakeAvailable(_project_options)
 include(${_project_options_SOURCE_DIR}/Index.cmake)
 
@@ -50,6 +50,11 @@ if(BUILDING_MULTI_CONFIG)
   endif()
 endif()
 
+# Disable CPPCHECK by default - older versions have far too
+# many false positives with this code
+set(ENABLE_CPPCHECK_DEFAULT FALSE CACHE BOOL "CppCheck disabled by default")
+set(ENABLE_DEVELOPER_MODE TRUE CACHE BOOL "Developer mode by default")
+
 include(${_project_options_SOURCE_DIR}/src/DynamicProjectOptions.cmake)
 
 # defaulted_project_options sets recommended defaults and provides user and developer
@@ -75,11 +80,19 @@ dynamic_project_options(
   # MSVC_WARNINGS  # Override the defaults for the MSVC warnings
   # CLANG_WARNINGS # Override the defaults for the CLANG warnings
   # GCC_WARNINGS   # Override the defaults for the GCC warnings
-)
+  CPPCHECK_OPTIONS
+  --enable=style,performance,warning,portability
+  --inline-suppr
+  # We cannot act on a bug/missing feature of cppcheck
+  --suppress=cppcheckError
+  --suppress=internalAstError
+  # if a file does not have an internalAstError, we get an unmatchedSuppression error
+  --suppress=unmatchedSuppression
+  --suppress=passedByValue
+  --inconclusive)
 
 target_compile_features(project_options INTERFACE cxx_std_${CMAKE_CXX_STANDARD})
 target_include_directories(project_options INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
-
 
 # Adding the tests:
 option(ENABLE_TESTING "Enable the tests" ON)

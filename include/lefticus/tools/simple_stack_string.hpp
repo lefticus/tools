@@ -1,11 +1,12 @@
 #ifndef LEFTICUS_TOOLS_SIMPLE_STACK_STRING_HPP
 #define LEFTICUS_TOOLS_SIMPLE_STACK_STRING_HPP
 
+#include <array>
 #include <cstdint>
 #include <string>
 
 namespace lefticus::tools {
-template<typename CharType, std::size_t Capacity, typename Traits = std::char_traits<CharType>>
+template<typename CharType, std::size_t TotalCapacity, typename Traits = std::char_traits<CharType>>
 struct basic_simple_stack_string
 {
   using traits_type = Traits;
@@ -14,26 +15,31 @@ struct basic_simple_stack_string
   using difference_type = std::ptrdiff_t;
   using reference = value_type &;
   using const_reference = const value_type &;
-  using data_type = std::array<value_type, Capacity>;
+  using data_type = std::array<value_type, TotalCapacity>;
 
   using iterator = typename data_type::iterator;
   using const_iterator = typename data_type::const_iterator;
   using reverse_iterator = typename data_type::reverse_iterator;
   using const_reverse_iterator = typename data_type::const_reverse_iterator;
 
-  constexpr basic_simple_stack_string() = default;
-  constexpr basic_simple_stack_string(nullptr_t) = delete;
+  static constexpr auto total_capacity = TotalCapacity;
 
-  constexpr basic_simple_stack_string(std::initializer_list<value_type> data)
+  constexpr basic_simple_stack_string() = default;
+  constexpr basic_simple_stack_string(std::nullptr_t) = delete;
+
+  constexpr explicit basic_simple_stack_string(std::initializer_list<value_type> data)
   {
     for (const auto &c : data) {
       push_back(c);// push_back is very cheap and this is simple
     }
   }
 
-  constexpr explicit basic_simple_stack_string(const value_type *str)
+  template<size_t Size>
+  constexpr explicit basic_simple_stack_string(const value_type (&str)[Size])
     : basic_simple_stack_string(std::basic_string_view<value_type>(str))
-  {}
+  {
+    static_assert(Size <= TotalCapacity);
+  }
 
   constexpr explicit basic_simple_stack_string(const std::basic_string_view<value_type> sv)
   {
@@ -67,12 +73,12 @@ struct basic_simple_stack_string
 
   [[nodiscard]] constexpr reverse_iterator rbegin() noexcept
   {
-    return std::next(data_.rbegin(), static_cast<difference_type>(Capacity - size_));
+    return std::next(data_.rbegin(), static_cast<difference_type>(TotalCapacity - size_));
   }
 
   [[nodiscard]] constexpr const_reverse_iterator rbegin() const noexcept
   {
-    return std::next(data_.crbegin(), static_cast<difference_type>(Capacity - size_));
+    return std::next(data_.crbegin(), static_cast<difference_type>(TotalCapacity - size_));
   }
   [[nodiscard]] constexpr const_reverse_iterator crbegin() const noexcept { return rbegin(); }
 
@@ -84,11 +90,11 @@ struct basic_simple_stack_string
 
   [[nodiscard]] constexpr const_reverse_iterator crend() const noexcept { return data_.crend(); }
 
-  template<typename Value> constexpr value_type &push_back(Value &&value)
+  constexpr value_type &push_back(const value_type c)
   {
-    if (size_ == Capacity) { throw std::length_error("push_back would exceed static capacity"); }
+    if (size_ - 1 == TotalCapacity) { throw std::length_error("push_back would exceed static capacity"); }
     data_[size_ + 1] = 0;// null terminator
-    data_[size_] = std::forward<Value>(value);
+    data_[size_] = c;
     return data_[size_++];
   }
 
@@ -108,6 +114,13 @@ struct basic_simple_stack_string
     return data_[idx];
   }
 
+  constexpr basic_simple_stack_string &operator+=(const std::string_view sv)
+  {
+    for (const auto c : sv) { push_back(c); }
+
+    return *this;
+  }
+
   // resets the size to 0, but does not destroy any existing objects
   constexpr void clear() { size_ = 0; }
 
@@ -115,14 +128,16 @@ struct basic_simple_stack_string
   // cppcheck-suppress functionStatic
   constexpr void reserve(size_type new_capacity)
   {
-    if (new_capacity > Capacity) { throw std::length_error("new capacity would exceed max_size for stack_vector"); }
+    if (new_capacity + 1 > TotalCapacity) {
+      throw std::length_error("new capacity would exceed max_size for stack_vector");
+    }
   }
 
   // cppcheck-suppress functionStatic
-  [[nodiscard]] constexpr static size_type capacity() noexcept { return Capacity; }
+  [[nodiscard]] constexpr static size_type capacity() noexcept { return TotalCapacity - 1; }
 
   // cppcheck-suppress functionStatic
-  [[nodiscard]] constexpr static size_type max_size() noexcept { return Capacity; }
+  [[nodiscard]] constexpr static size_type max_size() noexcept { return TotalCapacity - 1; }
 
   [[nodiscard]] constexpr size_type size() const noexcept { return size_; }
 
@@ -131,7 +146,7 @@ struct basic_simple_stack_string
     if (new_size <= size_) {
       size_ = new_size;
     } else {
-      if (new_size > Capacity) {
+      if (new_size > TotalCapacity) {
         throw std::length_error("resize would exceed static capacity");
       } else {
         auto old_end = end();
@@ -167,6 +182,9 @@ private:
 };
 
 template<typename CharType, std::size_t Size>
+basic_simple_stack_string(const CharType (&)[Size]) -> basic_simple_stack_string<CharType, Size>;
+
+template<typename CharType, std::size_t Size>
 [[nodiscard]] constexpr bool operator==(const basic_simple_stack_string<CharType, Size> &lhs,
   const CharType *rhs) noexcept
 {
@@ -180,8 +198,74 @@ template<typename CharType, std::size_t Size>
   return std::basic_string_view<CharType>(lhs) == static_cast<std::basic_string_view<CharType>>(rhs);
 }
 
+template<typename CharType, std::size_t Size>
+[[nodiscard]] constexpr bool operator==(const basic_simple_stack_string<CharType, Size> &lhs,
+  const std::basic_string_view<CharType> rhs) noexcept
+{
+  return static_cast<std::basic_string_view<CharType>>(lhs) == rhs;
+}
 
-template<std::size_t Capacity> using simple_stack_string = basic_simple_stack_string<char, Capacity>;
+template<typename CharType, std::size_t Size>
+[[nodiscard]] constexpr bool operator==(const std::basic_string_view<CharType> lhs,
+  const basic_simple_stack_string<CharType, Size> &rhs) noexcept
+{
+  return lhs == static_cast<std::basic_string_view<CharType>>(rhs);
+}
+
+
+template<typename CharType, std::size_t Size>
+[[nodiscard]] constexpr bool operator==(const basic_simple_stack_string<CharType, Size> &lhs,
+  const std::basic_string<CharType> &rhs) noexcept
+{
+  return static_cast<std::basic_string_view<CharType>>(lhs) == rhs;
+}
+
+template<typename CharType, std::size_t Size>
+[[nodiscard]] constexpr bool operator==(const std::basic_string<CharType> &lhs,
+  const basic_simple_stack_string<CharType, Size> &rhs) noexcept
+{
+  return lhs == static_cast<std::basic_string_view<CharType>>(rhs);
+}
+
+
+template<typename CharType, std::size_t LHSSize, std::size_t RHSSize>
+[[nodiscard]] constexpr basic_simple_stack_string<CharType, LHSSize + RHSSize - 1>
+  operator+(const basic_simple_stack_string<CharType, LHSSize> &lhs, const CharType (&rhs)[RHSSize])
+{
+  basic_simple_stack_string<CharType, LHSSize + RHSSize - 1> result{ lhs };
+  result += rhs;
+  return result;
+}
+
+template<typename CharType, std::size_t LHSSize, std::size_t RHSSize>
+[[nodiscard]] constexpr basic_simple_stack_string<CharType, LHSSize + RHSSize - 1>
+  operator+(const CharType (&lhs)[LHSSize], const basic_simple_stack_string<CharType, RHSSize> &rhs)
+{
+  basic_simple_stack_string<CharType, LHSSize + RHSSize - 1> result{ lhs };
+  result += rhs;
+  return result;
+}
+
+template<typename CharType, std::size_t LHSSize, std::size_t RHSSize>
+[[nodiscard]] constexpr basic_simple_stack_string<CharType, LHSSize + RHSSize - 1> operator+(
+  const basic_simple_stack_string<CharType, LHSSize> &lhs,
+  const basic_simple_stack_string<CharType, RHSSize> &rhs)
+{
+  basic_simple_stack_string<CharType, LHSSize + RHSSize - 1> result{ lhs };
+  result += rhs;
+  return result;
+}
+
+
+template<std::size_t TotalCapacity> using simple_stack_string = basic_simple_stack_string<char, TotalCapacity>;
+
+namespace literals {
+  // not actually a literal, but best we can do with C++17 support
+  template<typename CharType, std::size_t Size> [[nodiscard]] constexpr auto to_sss(const CharType (&data)[Size])
+  {
+    return basic_simple_stack_string{ data };
+  }
+}// namespace literals
 
 }// namespace lefticus::tools
 

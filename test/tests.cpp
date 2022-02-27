@@ -7,6 +7,7 @@
 #include <lefticus/tools/curry.hpp>
 #include <lefticus/tools/lambda_coroutines.hpp>
 #include <lefticus/tools/simple_stack_string.hpp>
+#include <lefticus/tools/flat_map.hpp>
 
 #include <catch2/catch.hpp>
 
@@ -113,3 +114,13 @@ TEST_CASE("simple_stack_string simple_stack_string == std::string, std::string =
   REQUIRE(to_sss("Hello") == std::string("Hello"));
   REQUIRE(std::string("Hello") == to_sss("Hello"));
 }
+
+TEST_CASE("flat_map basic test")
+{
+  lefticus::tools::flat_map < std::string_view, int> m;
+  m["Hello World"] = 5;
+  ++m["Hello World"];
+  REQUIRE(m["Hello World"] == 6);
+}
+
+

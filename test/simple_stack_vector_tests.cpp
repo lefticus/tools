@@ -78,3 +78,35 @@ TEST_CASE("simple_stack_vector reverse iterators work")
   CONSTEXPR auto incrementd_3 = increment(lefticus::tools::simple_stack_vector<int, 10>{ 1, 2, 3, 4 });
   STATIC_REQUIRE(incrementd_3 == lefticus::tools::simple_stack_vector<int, 4>{ 2, 3, 4, 5 });
 }
+
+
+
+TEST_CASE("simple_stack_vector push_back works")
+{
+  const auto create = []() {
+    lefticus::tools::simple_stack_vector<int, 10> vec;
+    vec.push_back(5);
+    vec.push_back(10);
+    return vec;
+  };
+
+  CONSTEXPR auto vec = create();
+  STATIC_REQUIRE(vec.size() == 2);
+  STATIC_REQUIRE(vec[0] == 5);
+  STATIC_REQUIRE(vec[1] == 10);
+}
+
+TEST_CASE("simple_stack_vector emplace_back works")
+{
+  const auto create = []() {
+    lefticus::tools::simple_stack_vector<std::pair<int,int>, 10> vec;
+    vec.emplace_back(1,2);
+    vec.emplace_back(3,4).second = 5;
+    return vec;
+  };
+
+  CONSTEXPR auto vec = create();
+  STATIC_REQUIRE(vec.size() == 2);
+  STATIC_REQUIRE(vec[0] == std::pair<int, int>{1,2});
+  STATIC_REQUIRE(vec[1] == std::pair<int, int>{ 3, 5 });
+}

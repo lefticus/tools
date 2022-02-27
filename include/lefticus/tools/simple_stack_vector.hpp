@@ -86,7 +86,7 @@ template<default_constructible Contained, std::size_t Capacity> struct simple_st
   template<typename... Param> constexpr value_type &emplace_back(Param &&...param)
   {
     if (size_ == Capacity) { throw std::length_error("emplace_back would exceed static capacity"); }
-    return data_[size_++] = data_type(std::forward<Param>(param)...);
+    return data_[size_++] = value_type(std::forward<Param>(param)...);
   }
 
   [[nodiscard]] constexpr value_type &operator[](const std::size_t idx) noexcept { return data_[idx]; }

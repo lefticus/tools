@@ -1,6 +1,7 @@
 #ifndef LEFTICUS_TOOLS_STATIC_VIEWS_HPP
 #define LEFTICUS_TOOLS_STATIC_VIEWS_HPP
 
+#include <algorithm>
 #include <array>
 #include <span>
 #include <string_view>

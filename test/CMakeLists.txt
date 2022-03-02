@@ -3,7 +3,7 @@ find_package(Catch2 REQUIRED)
 include(CTest)
 include(Catch)
 
-add_library(catch_main OBJECT catch_main.cpp)
+add_library(catch_main OBJECT catch_main.cpp ../include/lefticus/tools/simple_stack_flat_map.hpp ../include/lefticus/tools/flat_map.hpp)
 target_link_libraries(catch_main PUBLIC Catch2::Catch2)
 target_link_libraries(catch_main PRIVATE project_options)
 
@@ -62,4 +62,5 @@ add_constexpr_test_executables(
   simple_stack_vector_tests.cpp
   static_views_tests.cpp
   simple_stack_string_tests.cpp
+  flat_map_tests.cpp
   )

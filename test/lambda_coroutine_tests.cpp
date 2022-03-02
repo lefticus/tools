@@ -42,7 +42,7 @@ CONSTEXPR std::array<unsigned long long, 10> get_first_10()
 }
 
 #if (defined(_MSC_VER) && defined(CATCH_CONFIG_RUNTIME_STATIC_REQUIRE)) || !defined(_MSC_VER)
-TEST_CASE("lambda_coroutines are constexpr capable", "[constexpr]") { STATIC_REQUIRE(get_first_10()[4] == 3ULL); }
+TEST_CASE("[lambda_coroutines] is constexpr capable") { STATIC_REQUIRE(get_first_10()[4] == 3ULL); }
 #else
 #pragma message("Visual Studio's constexpr engine is not capable of handling the lambda coroutines")
 #endif

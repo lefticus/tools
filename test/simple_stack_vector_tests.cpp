@@ -9,19 +9,19 @@
 #endif
 
 
-TEST_CASE("simple_stack_vector starts empty")
+TEST_CASE("[simple_stack_vector] starts empty")
 {
   STATIC_REQUIRE(lefticus::tools::simple_stack_vector<int, 10>{}.empty() == true);
 }
 
 
-TEST_CASE("simple_stack_vector can be created from initializer_list")
+TEST_CASE("[simple_stack_vector] can be created from initializer_list")
 {
   CONSTEXPR auto vec = lefticus::tools::simple_stack_vector<char, 10>{ 'a', 'b', 'c', 'd' };
   STATIC_REQUIRE(vec.size() == 4);
 }
 
-TEST_CASE("simple_stack_vector const reverse iterators work")
+TEST_CASE("[simple_stack_vector] const reverse iterators work")
 {
   const auto reverse = [](const auto &input) {
     lefticus::tools::simple_stack_vector<int, 10> output;
@@ -41,7 +41,7 @@ TEST_CASE("simple_stack_vector const reverse iterators work")
   STATIC_REQUIRE(reversed_3 == lefticus::tools::simple_stack_vector<int, 10>{ 4, 3, 2, 1 });
 }
 
-TEST_CASE("simple_stack_vector c-reverse iterators work")
+TEST_CASE("[simple_stack_vector] c-reverse iterators work")
 {
   const auto reverse = [](const auto &input) {
     lefticus::tools::simple_stack_vector<int, 10> output;
@@ -61,7 +61,7 @@ TEST_CASE("simple_stack_vector c-reverse iterators work")
 }
 
 
-TEST_CASE("simple_stack_vector reverse iterators work")
+TEST_CASE("[simple_stack_vector] reverse iterators work")
 {
   const auto increment = [](auto input) {
     for (auto itr = input.rbegin(); itr != input.rend(); ++itr) { ++(*itr); }
@@ -81,7 +81,7 @@ TEST_CASE("simple_stack_vector reverse iterators work")
 
 
 
-TEST_CASE("simple_stack_vector push_back works")
+TEST_CASE("[simple_stack_vector] push_back works")
 {
   const auto create = []() {
     lefticus::tools::simple_stack_vector<int, 10> vec;
@@ -96,7 +96,7 @@ TEST_CASE("simple_stack_vector push_back works")
   STATIC_REQUIRE(vec[1] == 10);
 }
 
-TEST_CASE("simple_stack_vector emplace_back works")
+TEST_CASE("[simple_stack_vector] emplace_back works")
 {
   const auto create = []() {
     lefticus::tools::simple_stack_vector<std::pair<int,int>, 10> vec;
@@ -111,7 +111,7 @@ TEST_CASE("simple_stack_vector emplace_back works")
   STATIC_REQUIRE(vec[1] == std::pair<int, int>{ 3, 5 });
 }
 
-TEST_CASE("simple_stack_vector end / cend work") {
+TEST_CASE("[simple_stack_vector] end / cend work") {
   const auto create = []() {
     lefticus::tools::simple_stack_vector<int, 10> vec{1,2,3};
     return vec;
@@ -127,9 +127,9 @@ TEST_CASE("simple_stack_vector end / cend work") {
 
 
   const auto get_size_from_iterators = []() {
-    lefticus::tools::simple_stack_vector<int, 10> vec{ 1, 2, 3 };
+    lefticus::tools::simple_stack_vector<int, 10> ret{ 1, 2, 3 };
     // these will be non-const access to begin and end, even in the constexpr tests
-    return std::distance(vec.begin(), vec.end());
+    return std::distance(ret.begin(), ret.end());
   };
 
   STATIC_REQUIRE(get_size_from_iterators() == 3);

@@ -64,16 +64,11 @@ consteval auto to_right_sized_array(creates_iterable auto callable)
   return result;
 }
 
-template<auto Data> consteval const auto &make_static()
-{
-  // this is fully allowed - Data is made into a static by the compiler
-  // cppcheck-suppress returnTempReference
-  return Data;
-}
+template<auto Data> constexpr const auto &make_static = Data;
 
 consteval auto to_string_view(creates_string_like auto callable)
 {
-  constexpr auto &static_data = make_static<to_right_sized_array(callable)>();
+  constexpr auto &static_data = make_static<to_right_sized_array(callable)>;
   using Value_Type = typename std::decay_t<decltype(static_data)>::value_type;
   std::basic_string_view<Value_Type> result(static_data.begin(), static_data.end());
   return result;
@@ -81,10 +76,15 @@ consteval auto to_string_view(creates_string_like auto callable)
 
 consteval auto to_span(creates_iterable auto callable)
 {
-  constexpr auto &static_data = make_static<to_right_sized_array(callable)>();
+  constexpr auto &static_data = make_static<to_right_sized_array(callable)>;
   using Value_Type = typename std::decay_t<decltype(static_data)>::value_type;
   std::span<const Value_Type> result(static_data.begin(), static_data.end());
   return result;
+}
+
+template<std::size_t MaxSize>
+constexpr auto stackify(int value) {
+  return value;
 }
 
 }// namespace lefticus::tools

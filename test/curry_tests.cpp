@@ -9,7 +9,7 @@
 #endif
 
 
-TEST_CASE("curry lambda")
+TEST_CASE("[curry] lambda")
 {
   CONSTEXPR auto func = [](int x, int y, int z) { return x + y + z; };
 

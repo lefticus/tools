@@ -1,11 +1,9 @@
 #ifndef LEFTICUS_TOOLS_SIMPLE_STACK_VECTOR_HPP
 #define LEFTICUS_TOOLS_SIMPLE_STACK_VECTOR_HPP
 
-
 #include <array>
 #include <cstdint>
 #include <stdexcept>
-
 
 namespace lefticus::tools {
 
@@ -25,11 +23,12 @@ concept default_constructible = std::is_default_constructible_v<T>;
 template<default_constructible Contained, std::size_t Capacity> struct simple_stack_vector
 {
   using value_type = Contained;
-  using size_type = std::size_t;
-  using difference_type = std::ptrdiff_t;
+  using data_type = std::array<value_type, Capacity>;
+  using size_type = typename data_type::size_type;
+  using difference_type = typename data_type::difference_type;
   using reference = value_type &;
   using const_reference = const value_type &;
-  using data_type = std::array<value_type, Capacity>;
+
 
   using iterator = typename data_type::iterator;
   using const_iterator = typename data_type::const_iterator;
@@ -48,7 +47,10 @@ template<default_constructible Contained, std::size_t Capacity> struct simple_st
   [[nodiscard]] constexpr const_iterator begin() const noexcept { return data_.cbegin(); }
   [[nodiscard]] constexpr const_iterator cbegin() const noexcept { return data_.cbegin(); }
 
-  [[nodiscard]] constexpr iterator end() noexcept { return std::next(data_.begin(), size_); }
+  [[nodiscard]] constexpr iterator end() noexcept
+  {
+    return std::next(data_.begin(), static_cast<difference_type>(size_));
+  }
 
   [[nodiscard]] constexpr const_iterator end() const noexcept
   {
@@ -173,6 +175,16 @@ template<typename Contained, std::size_t LHSSize, std::size_t RHSSize>
   return false;
 }
 
+template<std::size_t MaxSize, typename Value> constexpr auto stackify(const std::vector<Value> &vec)
+{
+  return simple_stack_vector<decltype(stackify<MaxSize>(std::declval<Value>())), MaxSize>{ vec.begin(), vec.end() };
+}
+
+template<std::size_t MaxSize, typename Value, std::size_t CurSize>
+constexpr auto stackify(const simple_stack_vector<Value, CurSize> &vec)
+{
+  return simple_stack_vector<decltype(stackify<MaxSize>(std::declval<Value>())), CurSize>{ vec.begin(), vec.end() };
+}
 
 }// namespace lefticus::tools
 

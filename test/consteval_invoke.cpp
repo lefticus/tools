@@ -15,12 +15,12 @@ constexpr unsigned int Factorial(unsigned int number)// NOLINT(misc-no-recursion
 }
 
 
-TEST_CASE("consteval_invoke works")
+TEST_CASE("[consteval_invoke] works")
 {
   STATIC_REQUIRE(lefticus::tools::consteval_invoke(Factorial, 10) == 3628800);// NOLINT
 }
 
-TEST_CASE("consteval_invoke produces a constant expression")
+TEST_CASE("[consteval_invoke] produces a constant expression")
 {
   const auto value = lefticus::tools::consteval_invoke(Factorial, 3);// NOLINT
   STATIC_REQUIRE(value == 6);// NOLINT

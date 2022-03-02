@@ -11,11 +11,11 @@ struct basic_simple_stack_string
 {
   using traits_type = Traits;
   using value_type = CharType;
-  using size_type = std::size_t;
-  using difference_type = std::ptrdiff_t;
   using reference = value_type &;
   using const_reference = const value_type &;
   using data_type = std::array<value_type, TotalCapacity>;
+  using size_type = typename data_type::size_type;
+  using difference_type = typename data_type::difference_type;
 
   using iterator = typename data_type::iterator;
   using const_iterator = typename data_type::const_iterator;
@@ -27,6 +27,13 @@ struct basic_simple_stack_string
   constexpr basic_simple_stack_string() = default;
   constexpr basic_simple_stack_string(std::nullptr_t) = delete;
 
+  template<typename Itr>
+  constexpr basic_simple_stack_string(Itr begin, Itr end ) {
+    while (begin != end) {
+      push_back(*begin);
+      ++begin;
+    }
+  }
   constexpr explicit basic_simple_stack_string(std::initializer_list<value_type> data)
   {
     for (const auto &c : data) {
@@ -256,8 +263,18 @@ template<typename CharType, std::size_t LHSSize, std::size_t RHSSize>
   return result;
 }
 
-
 template<std::size_t TotalCapacity> using simple_stack_string = basic_simple_stack_string<char, TotalCapacity>;
+
+template<std::size_t MaxSize, typename CharType> auto stackify(const std::basic_string<CharType> &string)
+{
+  return basic_simple_stack_string<CharType, MaxSize>{ string.begin(), string.end() };
+}
+
+template<std::size_t MaxSize, typename CharType, std::size_t CurSize>
+auto stackify(const basic_simple_stack_string<CharType, CurSize> &string)
+{
+  return string;
+}
 
 namespace literals {
   // not actually a literal, but best we can do with C++17 support

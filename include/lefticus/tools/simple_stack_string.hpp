@@ -53,9 +53,18 @@ struct basic_simple_stack_string
     for (const auto c : sv) { push_back(c); }
   }
 
+
   constexpr operator std::basic_string_view<value_type>() const noexcept
   {
     return std::basic_string_view<value_type>(data(), size());
+  }
+
+  constexpr basic_simple_stack_string operator=(const std::basic_string_view<value_type> sv) {
+    clear();
+    for (const auto c: sv) {
+      push_back(c);
+    }
+    return *this;
   }
 
   [[nodiscard]] constexpr value_type *data() { return data_.data(); }
@@ -264,17 +273,6 @@ template<typename CharType, std::size_t LHSSize, std::size_t RHSSize>
 }
 
 template<std::size_t TotalCapacity> using simple_stack_string = basic_simple_stack_string<char, TotalCapacity>;
-
-template<std::size_t MaxSize, typename CharType> auto stackify(const std::basic_string<CharType> &string)
-{
-  return basic_simple_stack_string<CharType, MaxSize>{ string.begin(), string.end() };
-}
-
-template<std::size_t MaxSize, typename CharType, std::size_t CurSize>
-auto stackify(const basic_simple_stack_string<CharType, CurSize> &string)
-{
-  return string;
-}
 
 namespace literals {
   // not actually a literal, but best we can do with C++17 support

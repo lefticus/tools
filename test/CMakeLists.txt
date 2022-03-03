@@ -7,7 +7,7 @@ add_library(catch_main OBJECT catch_main.cpp ../include/lefticus/tools/simple_st
 target_link_libraries(catch_main PUBLIC Catch2::Catch2)
 target_link_libraries(catch_main PRIVATE project_options)
 
-add_executable(tests tests.cpp)
+add_executable(tests tests.cpp ../include/lefticus/tools/utility.hpp)
 target_link_libraries(tests PRIVATE project_warnings project_options catch_main)
 
 # automatically discover tests that are defined in catch based test files you can modify the unittests. Set TEST_PREFIX

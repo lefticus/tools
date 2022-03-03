@@ -4,14 +4,14 @@
 #include <array>
 #include <utility>
 
-#include <lefticus/tools/static_views.hpp>
 #include <lefticus/tools/curry.hpp>
 #include <lefticus/tools/flat_map.hpp>
+#include <lefticus/tools/static_views.hpp>
 
 #include <lefticus/tools/lambda_coroutines.hpp>
+#include <lefticus/tools/simple_stack_flat_map.hpp>
 #include <lefticus/tools/simple_stack_string.hpp>
 #include <lefticus/tools/simple_stack_vector.hpp>
-#include <lefticus/tools/simple_stack_flat_map.hpp>
 
 
 TEST_CASE("[lambda_coroutines] Generate infinite sequence")// NOLINT (cognitive complexity)
@@ -182,7 +182,7 @@ TEST_CASE("[flat_map_adapter] invariants hold")// NOLINT (cognitive complexity)
   lefticus::tools::flat_map<std::string_view, int> m;
 
   REQUIRE(m.empty());
-  REQUIRE(m.size() == 0); // NOLINT use empty
+  REQUIRE(m.size() == 0);// NOLINT use empty
 
   m["black"sv] = 7;
 
@@ -206,12 +206,12 @@ TEST_CASE("[flat_map_adapter] invariants hold")// NOLINT (cognitive complexity)
   m.clear();
 
   REQUIRE(m.empty());
-  REQUIRE(m.size() == 0); // NOLINT use empty
+  REQUIRE(m.size() == 0);// NOLINT use empty
 }
 
 TEST_CASE("[flat_map_adapter] stackify level 1")// NOLINT (cognitive complexity)
 {
-  lefticus::tools::flat_map<int, int> m{{1,2}, {4,5}};
+  lefticus::tools::flat_map<int, int> m{ { 1, 2 }, { 4, 5 } };
   const auto stack_map = stackify<4>(m);
   REQUIRE(stack_map.size() == 2);
   REQUIRE(stack_map.at(4) == 5);
@@ -221,8 +221,7 @@ TEST_CASE("[flat_map_adapter] stackify level 2")// NOLINT (cognitive complexity)
 {
   lefticus::tools::flat_map<std::string, int> m{ { "Hello", 2 }, { "World", 5 } };
   const auto stack_map = stackify<16>(m);
-  static_assert(std::is_same_v<typename decltype(stack_map)::key_type,
-                lefticus::tools::simple_stack_string<16>>);
+  static_assert(std::is_same_v<typename decltype(stack_map)::key_type, lefticus::tools::simple_stack_string<16>>);
 
   REQUIRE(stack_map.size() == 2);
   REQUIRE(stack_map.at("World") == 5);
@@ -235,8 +234,30 @@ TEST_CASE("[flat_map_adapter] stackify level 3")// NOLINT (cognitive complexity)
   static_assert(std::is_same_v<typename decltype(stack_map)::key_type, lefticus::tools::simple_stack_string<16>>);
   static_assert(std::is_same_v<typename decltype(stack_map)::mapped_type, lefticus::tools::simple_stack_string<16>>);
 
+  const auto max_sizes = lefticus::tools::max_element_size(stack_map);
+
   REQUIRE(stack_map.size() == 2);
   REQUIRE(stack_map.at("World") == "People");
+
+  REQUIRE(max_sizes.first == 2);
+  REQUIRE(max_sizes.second.first == 5);
+  REQUIRE(max_sizes.second.second == 6);
 }
 
+TEST_CASE("[flat_map_adapter] stackify level 4")// NOLINT (cognitive complexity)
+{
+  lefticus::tools::flat_map<std::string, std::vector<std::string>> m{
+    { "Hello", { "1", "2", "3" }},
+    { "World", { "1", "22", "333", "444" }},
+    { "a", {"a longer string"}}
+  };
 
+  const auto stack_map = stackify<16>(m);
+
+  const auto max_sizes = lefticus::tools::max_element_size(stack_map);
+
+  REQUIRE(max_sizes.first == 3);
+  REQUIRE(max_sizes.second.first == 5);
+  REQUIRE(max_sizes.second.second.first == 4);
+  REQUIRE(max_sizes.second.second.second == 15);
+}

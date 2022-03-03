@@ -84,3 +84,106 @@ TEST_CASE("[to_string_view] produces an std::string_view from simple_stack_strin
   STATIC_REQUIRE(result[0] == 'H');
   STATIC_REQUIRE(result.size() == 6);
 }
+
+
+TEST_CASE("[resize] can right-size a container level 1")// NOLINT (cognitive complexity)
+{
+  constexpr lefticus::tools::simple_stack_vector<int, 16> vec{ 1, 2, 3, 4, 5 };
+
+  STATIC_REQUIRE(vec.size() == 5);
+  STATIC_REQUIRE(vec.max_size() == 16);
+
+  constexpr auto bigger = lefticus::tools::stackify<32>(vec);
+
+  // stackify should never grow something that's already stack-based
+  STATIC_REQUIRE(bigger.size() == 5);
+  STATIC_REQUIRE(bigger.max_size() == 16);
+
+  constexpr auto max_sizes = lefticus::tools::max_element_size(bigger);
+
+  STATIC_REQUIRE(max_sizes.first == 5);
+  STATIC_REQUIRE(max_sizes.second == 1);
+
+  constexpr auto minimized = lefticus::tools::resize<max_sizes>(bigger);
+
+  STATIC_REQUIRE(minimized.capacity() == 5);
+
+  STATIC_REQUIRE(sizeof(minimized) < sizeof(bigger));
+}
+
+TEST_CASE("[resize] can right-size a container level 2")// NOLINT (cognitive complexity)
+{
+  constexpr lefticus::tools::simple_stack_vector<lefticus::tools::simple_stack_string<16>, 16> vec{
+    lefticus::tools::simple_stack_string<16>("Hello"), lefticus::tools::simple_stack_string<16>("long string")
+  };
+
+  constexpr auto max_sizes = lefticus::tools::max_element_size(vec);
+
+  STATIC_REQUIRE(max_sizes.first == 2);
+  STATIC_REQUIRE(max_sizes.second == 11);
+
+  constexpr auto minimized = lefticus::tools::resize<max_sizes>(vec);
+
+  STATIC_REQUIRE(minimized.capacity() == 2);
+
+  STATIC_REQUIRE(sizeof(minimized) < sizeof(vec));
+}
+
+template<typename T> using vector = lefticus::tools::simple_stack_vector<T, 16>;
+template<typename Key, typename Value> using map = lefticus::tools::simple_stack_flat_map<Key, Value, 16>;
+using string = lefticus::tools::simple_stack_string<16>;
+
+TEST_CASE("[minimized_stackify] works")// NOLINT (cognitive complexity)
+{
+  using namespace std::string_view_literals;
+  const auto make_data = []() {
+    map<string, map<string, vector<int>>> data;
+    data["hello"]["world"].push_back(42);
+    data["hello"]["jason"].push_back(72);
+    data["test"]["data"].push_back(84);
+    return data;
+  };
+
+  CONSTEXPR auto minimized = lefticus::tools::minimized_stackify<32>(make_data);
+
+  STATIC_REQUIRE(minimized.max_size() == 2);
+  STATIC_REQUIRE(minimized.at("hello").max_size() == 2);
+  STATIC_REQUIRE(minimized.at("hello").at("world").capacity() == 1);
+}
+
+/*
+TEST_CASE("[resize] can right-size a container")// NOLINT (cognitive complexity)
+{
+  lefticus::tools::simple_stack_vector<lefticus::tools::simple_stack_string<16>, 16>
+  vec{  "Hello",  "World",  "a", "a longer string"  };
+
+//  const auto stack_map = stackify<16>(m);
+
+//  const auto max_sizes = lefticus::tools::max_element_size(stack_map);
+
+//  REQUIRE(max_sizes.first == 3);
+// REQUIRE(max_sizes.second.first == 5);
+//  REQUIRE(max_sizes.second.second.first == 4);
+//  REQUIRE(max_sizes.second.second.second == 15);
+}
+*/
+
+/*
+TEST_CASE("[resize] can right-size a container")// NOLINT (cognitive complexity)
+{
+  lefticus::tools::simple_stack_flat_map<
+    lefticus::tools::simple_stack_string<16>,
+    lefticus::tools::simple_stack_vector<lefticus::tools::simple_stack_string<16>, 16>,
+    16>
+    m{ { "Hello", { "1", "2", "3" } }, { "World", { "1", "22", "333", "444" } }, { "a", { "a longer string" } } };
+
+  const auto stack_map = stackify<16>(m);
+
+  const auto max_sizes = lefticus::tools::max_element_size(stack_map);
+
+  REQUIRE(max_sizes.first == 3);
+  REQUIRE(max_sizes.second.first == 5);
+  REQUIRE(max_sizes.second.second.first == 4);
+  REQUIRE(max_sizes.second.second.second == 15);
+}
+  */

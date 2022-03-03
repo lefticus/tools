@@ -36,10 +36,34 @@ template<default_constructible Contained, std::size_t Capacity> struct simple_st
   using const_reverse_iterator = typename data_type::const_reverse_iterator;
 
   constexpr simple_stack_vector() = default;
-  constexpr explicit simple_stack_vector(std::initializer_list<value_type> values) : size_{ values.size() }
+  constexpr explicit simple_stack_vector(std::initializer_list<value_type> values)
   {
-    size_type index = 0;
-    for (const auto &value : values) { data_[index++] = value; }
+    for (const auto &value : values) { push_back(value); }
+  }
+
+  template<typename OtherContained, std::size_t OtherSize>
+  constexpr explicit simple_stack_vector(const simple_stack_vector<OtherContained, OtherSize> &other)
+  {
+    for (const auto &value : other) {
+      push_back(Contained(value));
+    }
+  }
+
+  // this might be a mistake, maybe this should be a utility function?
+  template<typename Type>
+  constexpr explicit simple_stack_vector(const std::vector<Type> &values)
+  {
+    for (const auto &value : values) { push_back(value); }
+  }
+
+
+  template<typename Itr>
+  constexpr simple_stack_vector(Itr begin, Itr end)
+  {
+    while (begin != end) {
+      push_back(*begin);
+      ++begin;
+    }
   }
 
   [[nodiscard]] constexpr iterator begin() noexcept { return data_.begin(); }
@@ -56,6 +80,13 @@ template<default_constructible Contained, std::size_t Capacity> struct simple_st
   {
     return std::next(data_.cbegin(), static_cast<difference_type>(size_));
   }
+
+  [[nodiscard]] constexpr value_type &front() noexcept {
+    return data_.front();
+  }
+  [[nodiscard]] constexpr const value_type &front() const noexcept { return data_.front(); }
+  [[nodiscard]] constexpr value_type &back() noexcept { return data_.back(); }
+  [[nodiscard]] constexpr const value_type &back() const noexcept { return data_.back(); }
 
   [[nodiscard]] constexpr const_iterator cend() const noexcept { return end(); }
 
@@ -88,7 +119,8 @@ template<default_constructible Contained, std::size_t Capacity> struct simple_st
   template<typename... Param> constexpr value_type &emplace_back(Param &&...param)
   {
     if (size_ == Capacity) { throw std::length_error("emplace_back would exceed static capacity"); }
-    return data_[size_++] = value_type(std::forward<Param>(param)...);
+    data_[size_] = value_type(std::forward<Param>(param)...);
+    return data_[size_++];
   }
 
   [[nodiscard]] constexpr value_type &operator[](const std::size_t idx) noexcept { return data_[idx]; }
@@ -173,17 +205,6 @@ template<typename Contained, std::size_t LHSSize, std::size_t RHSSize>
   }
 
   return false;
-}
-
-template<std::size_t MaxSize, typename Value> constexpr auto stackify(const std::vector<Value> &vec)
-{
-  return simple_stack_vector<decltype(stackify<MaxSize>(std::declval<Value>())), MaxSize>{ vec.begin(), vec.end() };
-}
-
-template<std::size_t MaxSize, typename Value, std::size_t CurSize>
-constexpr auto stackify(const simple_stack_vector<Value, CurSize> &vec)
-{
-  return simple_stack_vector<decltype(stackify<MaxSize>(std::declval<Value>())), CurSize>{ vec.begin(), vec.end() };
 }
 
 }// namespace lefticus::tools

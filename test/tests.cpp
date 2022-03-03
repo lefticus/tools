@@ -247,9 +247,7 @@ TEST_CASE("[flat_map_adapter] stackify level 3")// NOLINT (cognitive complexity)
 TEST_CASE("[flat_map_adapter] stackify level 4")// NOLINT (cognitive complexity)
 {
   lefticus::tools::flat_map<std::string, std::vector<std::string>> m{
-    { "Hello", { "1", "2", "3" }},
-    { "World", { "1", "22", "333", "444" }},
-    { "a", {"a longer string"}}
+    { "Hello", { "1", "2", "3" } }, { "World", { "1", "22", "333", "444" } }, { "a", { "a longer string" } }
   };
 
   const auto stack_map = stackify<16>(m);

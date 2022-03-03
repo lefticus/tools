@@ -11,7 +11,6 @@ template<typename Key, typename Value, std::size_t Size>
 using simple_stack_flat_map = flat_map_adapter<Key, Value, simple_stack_vector<std::pair<Key, Value>, Size>>;
 
 
-
 }// namespace lefticus::tools
 
 #endif// TOOLS_SIMPLE_STACK_FLAT_MAP_HPP

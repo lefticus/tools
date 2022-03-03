@@ -44,21 +44,17 @@ template<default_constructible Contained, std::size_t Capacity> struct simple_st
   template<typename OtherContained, std::size_t OtherSize>
   constexpr explicit simple_stack_vector(const simple_stack_vector<OtherContained, OtherSize> &other)
   {
-    for (const auto &value : other) {
-      push_back(Contained(value));
-    }
+    for (const auto &value : other) { push_back(Contained(value)); }
   }
 
   // this might be a mistake, maybe this should be a utility function?
-  template<typename Type>
-  constexpr explicit simple_stack_vector(const std::vector<Type> &values)
+  template<typename Type> constexpr explicit simple_stack_vector(const std::vector<Type> &values)
   {
     for (const auto &value : values) { push_back(value); }
   }
 
 
-  template<typename Itr>
-  constexpr simple_stack_vector(Itr begin, Itr end)
+  template<typename Itr> constexpr simple_stack_vector(Itr begin, Itr end)
   {
     while (begin != end) {
       push_back(*begin);
@@ -81,9 +77,7 @@ template<default_constructible Contained, std::size_t Capacity> struct simple_st
     return std::next(data_.cbegin(), static_cast<difference_type>(size_));
   }
 
-  [[nodiscard]] constexpr value_type &front() noexcept {
-    return data_.front();
-  }
+  [[nodiscard]] constexpr value_type &front() noexcept { return data_.front(); }
   [[nodiscard]] constexpr const value_type &front() const noexcept { return data_.front(); }
   [[nodiscard]] constexpr value_type &back() noexcept { return data_.back(); }
   [[nodiscard]] constexpr const value_type &back() const noexcept { return data_.back(); }

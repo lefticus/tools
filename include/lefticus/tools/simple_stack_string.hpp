@@ -27,8 +27,8 @@ struct basic_simple_stack_string
   constexpr basic_simple_stack_string() = default;
   constexpr basic_simple_stack_string(std::nullptr_t) = delete;
 
-  template<typename Itr>
-  constexpr basic_simple_stack_string(Itr begin, Itr end ) {
+  template<typename Itr> constexpr basic_simple_stack_string(Itr begin, Itr end)
+  {
     while (begin != end) {
       push_back(*begin);
       ++begin;
@@ -59,11 +59,10 @@ struct basic_simple_stack_string
     return std::basic_string_view<value_type>(data(), size());
   }
 
-  constexpr basic_simple_stack_string operator=(const std::basic_string_view<value_type> sv) {
+  constexpr basic_simple_stack_string operator=(const std::basic_string_view<value_type> sv)
+  {
     clear();
-    for (const auto c: sv) {
-      push_back(c);
-    }
+    for (const auto c : sv) { push_back(c); }
     return *this;
   }
 

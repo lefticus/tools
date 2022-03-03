@@ -31,17 +31,13 @@ template<typename Key, typename Value, typename Container> struct flat_map_adapt
   template<typename OtherKey, typename OtherValue, typename OtherContainer>
   constexpr explicit flat_map_adapter(const flat_map_adapter<OtherKey, OtherValue, OtherContainer> &other)
   {
-    for (const auto &item : other) {
-      data.emplace_back(Key(item.first), Value(item.second));
-    }
+    for (const auto &item : other) { data.emplace_back(Key(item.first), Value(item.second)); }
   }
 
-  constexpr explicit flat_map_adapter(std::initializer_list<value_type> initial_values)
-    : data(initial_values)
-  {}
+  constexpr explicit flat_map_adapter(std::initializer_list<value_type> initial_values) : data(initial_values) {}
 
-  template<typename Itr>
-  constexpr flat_map_adapter(Itr begin, Itr end) {
+  template<typename Itr> constexpr flat_map_adapter(Itr begin, Itr end)
+  {
     while (begin != end) {
       data.emplace_back(Key(begin->first), Value(begin->second));
       ++begin;
@@ -68,8 +64,8 @@ template<typename Key, typename Value, typename Container> struct flat_map_adapt
   [[nodiscard]] constexpr const_reverse_iterator rend() const noexcept { return data.rend(); }
   [[nodiscard]] constexpr const_reverse_iterator crend() const noexcept { return data.crend(); }
 
-  template<typename NewKey>
-  [[nodiscard]] constexpr mapped_type &operator[](NewKey &&key) {
+  template<typename NewKey> [[nodiscard]] constexpr mapped_type &operator[](NewKey &&key)
+  {
     return this->try_emplace(std::forward<NewKey>(key)).first->second;
   }
 

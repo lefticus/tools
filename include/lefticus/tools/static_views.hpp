@@ -1,14 +1,14 @@
 #ifndef LEFTICUS_TOOLS_STATIC_VIEWS_HPP
 #define LEFTICUS_TOOLS_STATIC_VIEWS_HPP
 
+#include "simple_stack_flat_map.hpp"
+#include "simple_stack_string.hpp"
+#include "simple_stack_vector.hpp"
+#include "utility.hpp"
 #include <algorithm>
 #include <array>
 #include <span>
 #include <string_view>
-#include "simple_stack_flat_map.hpp"
-#include "simple_stack_vector.hpp"
-#include "simple_stack_string.hpp"
-#include "utility.hpp"
 
 namespace lefticus::tools {
 
@@ -131,8 +131,6 @@ constexpr auto stackify(const simple_stack_flat_map<Key, Value, CurSize> &map)
 }
 
 
-
-
 template<typename Arg> constexpr auto max_max(const Arg &lhs, const Arg &rhs) { return std::max(lhs, rhs); }
 
 template<typename First, typename Second>
@@ -172,21 +170,20 @@ constexpr auto max_element_size(const simple_stack_flat_map<Key, Value, CurSize>
   return pair{ map.size(), pair{ key_max, value_max } };
 }
 
-template<auto NewSize>
-constexpr auto resize(const auto &value) {
-  return value;
-}
+template<auto NewSize> constexpr auto resize(const auto &value) { return value; }
 
 template<auto NewSize, typename CharType, std::size_t CurSize>
-constexpr auto resize(const basic_simple_stack_string<CharType, CurSize> &str) {
+constexpr auto resize(const basic_simple_stack_string<CharType, CurSize> &str)
+{
   // +1 for null terminator
-  return basic_simple_stack_string<CharType, NewSize+1>{str.begin(), str.end()};
+  return basic_simple_stack_string<CharType, NewSize + 1>{ str.begin(), str.end() };
 }
 
 template<auto NewSize, typename Value, std::size_t CurSize>
-constexpr auto resize(const simple_stack_vector<Value, CurSize> &vec) {
+constexpr auto resize(const simple_stack_vector<Value, CurSize> &vec)
+{
   using new_value_type = decltype(resize<NewSize.second>(std::declval<Value>()));
-  return simple_stack_vector<new_value_type, NewSize.first>{vec.begin(), vec.end()};
+  return simple_stack_vector<new_value_type, NewSize.first>{ vec.begin(), vec.end() };
 }
 
 template<auto NewSize, typename Key, typename Value, std::size_t CurSize>
@@ -195,14 +192,13 @@ constexpr auto resize(const simple_stack_flat_map<Key, Value, CurSize> &map)
   using new_key_type = decltype(resize<NewSize.second.first>(std::declval<Key>()));
   using new_value_type = decltype(resize<NewSize.second.second>(std::declval<Value>()));
 
-  return simple_stack_flat_map<new_key_type, new_value_type, NewSize.first>{map.begin(), map.end()};
+  return simple_stack_flat_map<new_key_type, new_value_type, NewSize.first>{ map.begin(), map.end() };
 }
 
-template<std::size_t MaxSize, typename Callable>
-constexpr auto minimized_stackify(Callable callable)
+template<std::size_t MaxSize, typename Callable> constexpr auto minimized_stackify(Callable callable)
 {
   constexpr auto stackified = stackify<MaxSize>(callable());
-  return resize< max_element_size(stackified)>(stackified);
+  return resize<max_element_size(stackified)>(stackified);
 }
 
 

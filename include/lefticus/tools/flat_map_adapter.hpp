@@ -1,8 +1,12 @@
 #ifndef LEFTICUS_TOOLS_FLAT_MAP_HPP
 #define LEFTICUS_TOOLS_FLAT_MAP_HPP
 
-#include "utility.hpp"
 #include <cstdint>
+#include <initializer_list>
+#include <stdexcept>
+#include <utility>
+
+#include "utility.hpp"
 
 namespace lefticus::tools {
 

@@ -1,8 +1,10 @@
 #ifndef LEFTICUS_TOOLS_NON_PROMOTING_INTS_HPP
 #define LEFTICUS_TOOLS_NON_PROMOTING_INTS_HPP
 
+#include <compare>
 #include <concepts>
 #include <cstdint>
+
 
 namespace lefticus::tools {
 template<std::integral Type> struct int_np

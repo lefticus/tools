@@ -1,6 +1,8 @@
 #ifndef LEFTICUS_TOOLS_CONSTEVAL_INVOKE_HPP
 #define LEFTICUS_TOOLS_CONSTEVAL_INVOKE_HPP
 
+#include <functional>
+
 namespace lefticus::tools {
 
 /// Trivial wrapper around `std::invoke` to forced a function to be executed at compile-time

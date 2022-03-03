@@ -2,10 +2,11 @@
 #define LEFTICUS_TOOLS_SIMPLE_STACK_STRING_HPP
 
 #include <array>
-#include <cstdint>
-#include <string>
+#include <string_view>
+#include <stdexcept>
 
 namespace lefticus::tools {
+
 template<typename CharType, std::size_t TotalCapacity, typename Traits = std::char_traits<CharType>>
 struct basic_simple_stack_string
 {
@@ -41,7 +42,7 @@ struct basic_simple_stack_string
     }
   }
 
-  template<size_t Size>
+  template<std::size_t Size>
   constexpr explicit basic_simple_stack_string(const value_type (&str)[Size])
     : basic_simple_stack_string(std::basic_string_view<value_type>(str))
   {

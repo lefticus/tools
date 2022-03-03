@@ -1,5 +1,6 @@
 #include <catch2/catch.hpp>
 #include <lefticus/tools/simple_stack_vector.hpp>
+#include <lefticus/tools/utility.hpp>
 
 #ifdef CATCH_CONFIG_RUNTIME_STATIC_REQUIRE
 #define CONSTEXPR
@@ -98,7 +99,7 @@ TEST_CASE("[simple_stack_vector] push_back works")
 TEST_CASE("[simple_stack_vector] emplace_back works")
 {
   const auto create = []() {
-    lefticus::tools::simple_stack_vector<std::pair<int, int>, 10> vec;
+    lefticus::tools::simple_stack_vector<lefticus::tools::pair<int, int>, 10> vec;
     vec.emplace_back(1, 2);
     vec.emplace_back(3, 4).second = 5;
     return vec;

@@ -4,11 +4,10 @@
 #include <array>
 #include <cstdint>
 #include <stdexcept>
+#include <vector>
 
 namespace lefticus::tools {
 
-template<typename T>
-concept default_constructible = std::is_default_constructible_v<T>;
 
 // changes from std::vector
 //  * capacity if fixed at compile-time
@@ -19,8 +18,7 @@ concept default_constructible = std::is_default_constructible_v<T>;
 //  * iterators are never invalidated
 //  * capacity() and max_size() are now static functions
 //  * should be fully C++17 usable within constexpr
-// TODO add C++17 binary to test this simple_stack_vector
-template<default_constructible Contained, std::size_t Capacity> struct simple_stack_vector
+template<typename Contained, std::size_t Capacity> struct simple_stack_vector
 {
   using value_type = Contained;
   using data_type = std::array<value_type, Capacity>;
@@ -29,6 +27,7 @@ template<default_constructible Contained, std::size_t Capacity> struct simple_st
   using reference = value_type &;
   using const_reference = const value_type &;
 
+  static_assert(std::is_default_constructible_v<Contained>);
 
   using iterator = typename data_type::iterator;
   using const_iterator = typename data_type::const_iterator;
@@ -47,12 +46,10 @@ template<default_constructible Contained, std::size_t Capacity> struct simple_st
     for (const auto &value : other) { push_back(Contained{ value }); }
   }
 
-  // this might be a mistake, maybe this should be a utility function?
   template<typename Type> constexpr explicit simple_stack_vector(const std::vector<Type> &values)
   {
-    for (const auto &value : values) { push_back(value); }
+    for (const auto &value : values) { push_back(Contained{value}); }
   }
-
 
   template<typename Itr> constexpr simple_stack_vector(Itr begin, Itr end)
   {

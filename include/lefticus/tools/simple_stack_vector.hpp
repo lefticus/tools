@@ -44,7 +44,7 @@ template<default_constructible Contained, std::size_t Capacity> struct simple_st
   template<typename OtherContained, std::size_t OtherSize>
   constexpr explicit simple_stack_vector(const simple_stack_vector<OtherContained, OtherSize> &other)
   {
-    for (const auto &value : other) { push_back(Contained(value)); }
+    for (const auto &value : other) { push_back(Contained{value}); }
   }
 
   // this might be a mistake, maybe this should be a utility function?
@@ -113,7 +113,7 @@ template<default_constructible Contained, std::size_t Capacity> struct simple_st
   template<typename... Param> constexpr value_type &emplace_back(Param &&...param)
   {
     if (size_ == Capacity) { throw std::length_error("emplace_back would exceed static capacity"); }
-    data_[size_] = value_type(std::forward<Param>(param)...);
+    data_[size_] = value_type{std::forward<Param>(param)...};
     return data_[size_++];
   }
 

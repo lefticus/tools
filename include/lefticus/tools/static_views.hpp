@@ -197,7 +197,7 @@ constexpr auto resize(const simple_stack_flat_map<Key, Value, CurSize> &map)
 
 template<std::size_t MaxSize, typename Callable> constexpr auto minimized_stackify(Callable callable)
 {
-  constexpr auto stackified = stackify<MaxSize>(callable());
+  constexpr auto stackified{ stackify<MaxSize>(callable()) };
   return resize<max_element_size(stackified)>(stackified);
 }
 

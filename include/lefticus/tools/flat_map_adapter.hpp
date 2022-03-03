@@ -2,7 +2,7 @@
 #define LEFTICUS_TOOLS_FLAT_MAP_HPP
 
 #include <cstdint>
-#include <utility>
+#include "utility.hpp"
 
 namespace lefticus::tools {
 
@@ -101,12 +101,12 @@ template<typename Key, typename Value, typename Container> struct flat_map_adapt
 
   template<typename K> [[nodiscard]] constexpr const mapped_type &at(const K &k) const { return at(k, this); }
 
-  template<class K, class... Args> constexpr std::pair<iterator, bool> try_emplace(K &&k, Args &&...args)
+  template<class K, class... Args> constexpr pair<iterator, bool> try_emplace(K &&k, Args &&...args)
   {
     auto found = find(k);
     if (found != data.end()) { return { found, false }; }
 
-    data.emplace_back(value_type{ std::forward<K>(k), { std::forward<Args>(args)... } });
+    data.emplace_back(value_type{  key_type{ std::forward<K>(k) }, mapped_type{ std::forward<Args>(args)... } });
     return { std::next(data.begin(), static_cast<difference_type>(data.size() - 1)), true };
   }
 

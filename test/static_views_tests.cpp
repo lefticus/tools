@@ -1,6 +1,8 @@
 #include <catch2/catch.hpp>
 #include <lefticus/tools/simple_stack_string.hpp>
 #include <lefticus/tools/simple_stack_vector.hpp>
+#include <lefticus/tools/flat_map.hpp>
+#include <lefticus/tools/simple_stack_flat_map.hpp>
 #include <lefticus/tools/static_views.hpp>
 
 #ifdef CATCH_CONFIG_RUNTIME_STATIC_REQUIRE
@@ -151,39 +153,28 @@ TEST_CASE("[minimized_stackify] works")// NOLINT (cognitive complexity)
   STATIC_REQUIRE(minimized.at("hello").at("world").capacity() == 1);
 }
 
-/*
-TEST_CASE("[resize] can right-size a container")// NOLINT (cognitive complexity)
+
+
+#if __cpp_lib_constexpr_string >= 201907L && __cpp_lib_constexpr_vector >= 201907L
+
+
+TEST_CASE("[minimized_stackify] works with std::vector, std::string")// NOLINT (cognitive complexity)
 {
-  lefticus::tools::simple_stack_vector<lefticus::tools::simple_stack_string<16>, 16>
-  vec{  "Hello",  "World",  "a", "a longer string"  };
+  using namespace std::string_view_literals;
+  const auto make_data = []() {
+    lefticus::tools::flat_map<std::string, lefticus::tools::flat_map<std::string, std::vector<int>>> data;
+    data["hello"]["world"].push_back(42);
+    data["hello"]["jason"].push_back(72);
+    data["test"]["data"].push_back(84);
+    return data;
+  };
 
-//  const auto stack_map = stackify<16>(m);
+  CONSTEXPR auto minimized = lefticus::tools::minimized_stackify<32>(make_data);
 
-//  const auto max_sizes = lefticus::tools::max_element_size(stack_map);
-
-//  REQUIRE(max_sizes.first == 3);
-// REQUIRE(max_sizes.second.first == 5);
-//  REQUIRE(max_sizes.second.second.first == 4);
-//  REQUIRE(max_sizes.second.second.second == 15);
+  STATIC_REQUIRE(minimized.max_size() == 2);
+  STATIC_REQUIRE(minimized.at("hello").max_size() == 2);
+  STATIC_REQUIRE(minimized.at("hello").at("world").capacity() == 1);
 }
-*/
 
-/*
-TEST_CASE("[resize] can right-size a container")// NOLINT (cognitive complexity)
-{
-  lefticus::tools::simple_stack_flat_map<
-    lefticus::tools::simple_stack_string<16>,
-    lefticus::tools::simple_stack_vector<lefticus::tools::simple_stack_string<16>, 16>,
-    16>
-    m{ { "Hello", { "1", "2", "3" } }, { "World", { "1", "22", "333", "444" } }, { "a", { "a longer string" } } };
 
-  const auto stack_map = stackify<16>(m);
-
-  const auto max_sizes = lefticus::tools::max_element_size(stack_map);
-
-  REQUIRE(max_sizes.first == 3);
-  REQUIRE(max_sizes.second.first == 5);
-  REQUIRE(max_sizes.second.second.first == 4);
-  REQUIRE(max_sizes.second.second.second == 15);
-}
-  */
+#endif

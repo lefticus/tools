@@ -1,8 +1,8 @@
 #include <catch2/catch.hpp>
-#include <lefticus/tools/simple_stack_string.hpp>
-#include <lefticus/tools/simple_stack_vector.hpp>
 #include <lefticus/tools/flat_map.hpp>
 #include <lefticus/tools/simple_stack_flat_map.hpp>
+#include <lefticus/tools/simple_stack_string.hpp>
+#include <lefticus/tools/simple_stack_vector.hpp>
 #include <lefticus/tools/static_views.hpp>
 
 #ifdef CATCH_CONFIG_RUNTIME_STATIC_REQUIRE
@@ -152,7 +152,6 @@ TEST_CASE("[minimized_stackify] works")// NOLINT (cognitive complexity)
   STATIC_REQUIRE(minimized.at("hello").max_size() == 2);
   STATIC_REQUIRE(minimized.at("hello").at("world").capacity() == 1);
 }
-
 
 
 #if __cpp_lib_constexpr_string >= 201907L && __cpp_lib_constexpr_vector >= 201907L

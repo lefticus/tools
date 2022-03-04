@@ -48,7 +48,7 @@ template<typename Contained, std::size_t Capacity> struct simple_stack_vector
 
   template<typename Type> constexpr explicit simple_stack_vector(const std::vector<Type> &values)
   {
-    for (const auto &value : values) { push_back(Contained{value}); }
+    for (const auto &value : values) { push_back(Contained{ value }); }
   }
 
   template<typename Itr> constexpr simple_stack_vector(Itr begin, Itr end)

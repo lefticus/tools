@@ -2,8 +2,8 @@
 #define LEFTICUS_TOOLS_SIMPLE_STACK_STRING_HPP
 
 #include <array>
-#include <string_view>
 #include <stdexcept>
+#include <string_view>
 
 namespace lefticus::tools {
 

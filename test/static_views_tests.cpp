@@ -156,6 +156,7 @@ TEST_CASE("[minimized_stackify] works")// NOLINT (cognitive complexity)
 
 #if __cpp_lib_constexpr_string >= 201907L && __cpp_lib_constexpr_vector >= 201907L
 
+#if (defined(_ITERATOR_DEBUG_LEVEL) && _ITERATOR_DEBUG_LEVEL == 0) || !defined(_ITERATOR_DEBUG_LEVEL)
 
 TEST_CASE("[minimized_stackify] works with std::vector, std::string")// NOLINT (cognitive complexity)
 {
@@ -175,5 +176,10 @@ TEST_CASE("[minimized_stackify] works with std::vector, std::string")// NOLINT (
   STATIC_REQUIRE(minimized.at("hello").at("world").capacity() == 1);
 }
 
+#else
+
+#pragma message("Visual Studio's debug iterators are not fully constexpr capable")
+
+#endif
 
 #endif

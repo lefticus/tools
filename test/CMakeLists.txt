@@ -65,9 +65,6 @@ add_constexpr_test_executables(
 target_link_libraries("constexpr_tests" PRIVATE project_options project_warnings catch_main)
 target_link_libraries("relaxed_constexpr_tests" PRIVATE project_options project_warnings catch_main)
 
-
-
-
 add_library(cpp17_catch_main OBJECT catch_main.cpp)
 target_link_libraries(cpp17_catch_main PUBLIC Catch2::Catch2)
 

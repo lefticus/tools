@@ -1,10 +1,7 @@
 #ifndef TOOLS_UTILITY_HPP
 #define TOOLS_UTILITY_HPP
 
-// forward declare std::pair
-namespace std {
-template<typename LHS, typename RHS> class pair;
-}
+#include <utility>
 
 namespace lefticus::tools {
 template<typename First, typename Second> struct pair

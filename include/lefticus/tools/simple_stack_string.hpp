@@ -2,20 +2,21 @@
 #define LEFTICUS_TOOLS_SIMPLE_STACK_STRING_HPP
 
 #include <array>
-#include <cstdint>
-#include <string>
+#include <stdexcept>
+#include <string_view>
 
 namespace lefticus::tools {
+
 template<typename CharType, std::size_t TotalCapacity, typename Traits = std::char_traits<CharType>>
 struct basic_simple_stack_string
 {
   using traits_type = Traits;
   using value_type = CharType;
-  using size_type = std::size_t;
-  using difference_type = std::ptrdiff_t;
   using reference = value_type &;
   using const_reference = const value_type &;
   using data_type = std::array<value_type, TotalCapacity>;
+  using size_type = typename data_type::size_type;
+  using difference_type = typename data_type::difference_type;
 
   using iterator = typename data_type::iterator;
   using const_iterator = typename data_type::const_iterator;
@@ -27,6 +28,13 @@ struct basic_simple_stack_string
   constexpr basic_simple_stack_string() = default;
   constexpr basic_simple_stack_string(std::nullptr_t) = delete;
 
+  template<typename Itr> constexpr basic_simple_stack_string(Itr begin, Itr end)
+  {
+    while (begin != end) {
+      push_back(*begin);
+      ++begin;
+    }
+  }
   constexpr explicit basic_simple_stack_string(std::initializer_list<value_type> data)
   {
     for (const auto &c : data) {
@@ -34,7 +42,7 @@ struct basic_simple_stack_string
     }
   }
 
-  template<size_t Size>
+  template<std::size_t Size>
   constexpr explicit basic_simple_stack_string(const value_type (&str)[Size])
     : basic_simple_stack_string(std::basic_string_view<value_type>(str))
   {
@@ -46,9 +54,17 @@ struct basic_simple_stack_string
     for (const auto c : sv) { push_back(c); }
   }
 
+
   constexpr operator std::basic_string_view<value_type>() const noexcept
   {
     return std::basic_string_view<value_type>(data(), size());
+  }
+
+  constexpr basic_simple_stack_string operator=(const std::basic_string_view<value_type> sv)
+  {
+    clear();
+    for (const auto c : sv) { push_back(c); }
+    return *this;
   }
 
   [[nodiscard]] constexpr value_type *data() { return data_.data(); }
@@ -255,7 +271,6 @@ template<typename CharType, std::size_t LHSSize, std::size_t RHSSize>
   result += rhs;
   return result;
 }
-
 
 template<std::size_t TotalCapacity> using simple_stack_string = basic_simple_stack_string<char, TotalCapacity>;
 

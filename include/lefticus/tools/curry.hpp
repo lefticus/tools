@@ -25,6 +25,8 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <https://unlicense.org>
 */
 
+#include <functional>
+
 namespace lefticus::tools {
 // intentional copies, require std::reference_wrapper if people
 // want references. This is consistent with stdlib's bind

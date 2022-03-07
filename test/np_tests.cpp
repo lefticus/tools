@@ -9,7 +9,7 @@
 #endif
 
 
-TEST_CASE("npint UDLs work")
+TEST_CASE("[int_np] UDLs work")
 {
   using namespace lefticus::tools::literals;
 
@@ -18,7 +18,7 @@ TEST_CASE("npint UDLs work")
 }
 
 
-TEST_CASE("npint + int = npint")
+TEST_CASE("[int_np] npint + int = npint")
 {
   using namespace lefticus::tools::literals;
 
@@ -26,7 +26,7 @@ TEST_CASE("npint + int = npint")
   static_assert(std::is_same_v<decltype(i1), const lefticus::tools::int_np<std::int8_t>>);
 }
 
-TEST_CASE("int + npint = npint")
+TEST_CASE("[int_np] int + npint = npint")
 {
   using namespace lefticus::tools::literals;
 
@@ -34,7 +34,7 @@ TEST_CASE("int + npint = npint")
   static_assert(std::is_same_v<decltype(i1), const lefticus::tools::int_np<std::int8_t>>);
 }
 
-TEST_CASE("npint << int = npint")
+TEST_CASE("[int_np] (npint << int) = npint")
 {
   using namespace lefticus::tools::literals;
 
@@ -43,7 +43,7 @@ TEST_CASE("npint << int = npint")
 }
 
 
-TEST_CASE("2_np8 << 3 == 26")
+TEST_CASE("[int_np] (2_np8 << 3) == 26")
 {
   using namespace lefticus::tools::literals;
 
@@ -51,7 +51,7 @@ TEST_CASE("2_np8 << 3 == 26")
 }
 
 
-TEST_CASE("can compare np_int to underlying type")
+TEST_CASE("[int_np] can compare to underlying type")
 {
   using namespace lefticus::tools::literals;
 
@@ -59,7 +59,7 @@ TEST_CASE("can compare np_int to underlying type")
 }
 
 
-TEST_CASE("np_int is only constructible from underlying type")
+TEST_CASE("[int_np] is only constructible from underlying type")
 {
   using namespace lefticus::tools::literals;
 

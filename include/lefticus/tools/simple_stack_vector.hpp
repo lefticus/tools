@@ -1,16 +1,13 @@
 #ifndef LEFTICUS_TOOLS_SIMPLE_STACK_VECTOR_HPP
 #define LEFTICUS_TOOLS_SIMPLE_STACK_VECTOR_HPP
 
-
 #include <array>
 #include <cstdint>
 #include <stdexcept>
-
+#include <vector>
 
 namespace lefticus::tools {
 
-template<typename T>
-concept default_constructible = std::is_default_constructible_v<T>;
 
 // changes from std::vector
 //  * capacity if fixed at compile-time
@@ -21,15 +18,16 @@ concept default_constructible = std::is_default_constructible_v<T>;
 //  * iterators are never invalidated
 //  * capacity() and max_size() are now static functions
 //  * should be fully C++17 usable within constexpr
-// TODO add C++17 binary to test this simple_stack_vector
-template<default_constructible Contained, std::size_t Capacity> struct simple_stack_vector
+template<typename Contained, std::size_t Capacity> struct simple_stack_vector
 {
   using value_type = Contained;
-  using size_type = std::size_t;
-  using difference_type = std::ptrdiff_t;
+  using data_type = std::array<value_type, Capacity>;
+  using size_type = typename data_type::size_type;
+  using difference_type = typename data_type::difference_type;
   using reference = value_type &;
   using const_reference = const value_type &;
-  using data_type = std::array<value_type, Capacity>;
+
+  static_assert(std::is_default_constructible_v<Contained>);
 
   using iterator = typename data_type::iterator;
   using const_iterator = typename data_type::const_iterator;
@@ -37,10 +35,28 @@ template<default_constructible Contained, std::size_t Capacity> struct simple_st
   using const_reverse_iterator = typename data_type::const_reverse_iterator;
 
   constexpr simple_stack_vector() = default;
-  constexpr explicit simple_stack_vector(std::initializer_list<value_type> values) : size_{ values.size() }
+  constexpr explicit simple_stack_vector(std::initializer_list<value_type> values)
   {
-    size_type index = 0;
-    for (const auto &value : values) { data_[index++] = value; }
+    for (const auto &value : values) { push_back(value); }
+  }
+
+  template<typename OtherContained, std::size_t OtherSize>
+  constexpr explicit simple_stack_vector(const simple_stack_vector<OtherContained, OtherSize> &other)
+  {
+    for (const auto &value : other) { push_back(Contained{ value }); }
+  }
+
+  template<typename Type> constexpr explicit simple_stack_vector(const std::vector<Type> &values)
+  {
+    for (const auto &value : values) { push_back(Contained{ value }); }
+  }
+
+  template<typename Itr> constexpr simple_stack_vector(Itr begin, Itr end)
+  {
+    while (begin != end) {
+      push_back(*begin);
+      ++begin;
+    }
   }
 
   [[nodiscard]] constexpr iterator begin() noexcept { return data_.begin(); }
@@ -48,12 +64,20 @@ template<default_constructible Contained, std::size_t Capacity> struct simple_st
   [[nodiscard]] constexpr const_iterator begin() const noexcept { return data_.cbegin(); }
   [[nodiscard]] constexpr const_iterator cbegin() const noexcept { return data_.cbegin(); }
 
-  [[nodiscard]] constexpr iterator end() noexcept { return std::next(data_.begin(), size_); }
+  [[nodiscard]] constexpr iterator end() noexcept
+  {
+    return std::next(data_.begin(), static_cast<difference_type>(size_));
+  }
 
   [[nodiscard]] constexpr const_iterator end() const noexcept
   {
     return std::next(data_.cbegin(), static_cast<difference_type>(size_));
   }
+
+  [[nodiscard]] constexpr value_type &front() noexcept { return data_.front(); }
+  [[nodiscard]] constexpr const value_type &front() const noexcept { return data_.front(); }
+  [[nodiscard]] constexpr value_type &back() noexcept { return data_.back(); }
+  [[nodiscard]] constexpr const value_type &back() const noexcept { return data_.back(); }
 
   [[nodiscard]] constexpr const_iterator cend() const noexcept { return end(); }
 
@@ -86,7 +110,8 @@ template<default_constructible Contained, std::size_t Capacity> struct simple_st
   template<typename... Param> constexpr value_type &emplace_back(Param &&...param)
   {
     if (size_ == Capacity) { throw std::length_error("emplace_back would exceed static capacity"); }
-    return data_[size_++] = data_type(std::forward<Param>(param)...);
+    data_[size_] = value_type{ std::forward<Param>(param)... };
+    return data_[size_++];
   }
 
   [[nodiscard]] constexpr value_type &operator[](const std::size_t idx) noexcept { return data_[idx]; }
@@ -172,7 +197,6 @@ template<typename Contained, std::size_t LHSSize, std::size_t RHSSize>
 
   return false;
 }
-
 
 }// namespace lefticus::tools
 

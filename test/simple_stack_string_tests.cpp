@@ -9,12 +9,12 @@
 #endif
 
 
-TEST_CASE("simple_stack_string starts empty")
+TEST_CASE("[simple_stack_string] starts empty")
 {
   STATIC_REQUIRE(lefticus::tools::simple_stack_string<10>{}.empty() == true);
 }
 
-TEST_CASE("basic_simple_stack_string can be used")
+TEST_CASE("[simple_stack_string] basic_simple_stack_string template can be used")
 {
   CONSTEXPR bool type_match =
     std::is_same_v<typename lefticus::tools::basic_simple_stack_string<wchar_t, 10>::traits_type,
@@ -23,20 +23,20 @@ TEST_CASE("basic_simple_stack_string can be used")
 }
 
 
-TEST_CASE("simple_stack_string can be created from initializer_list")
+TEST_CASE("[simple_stack_string] can be created from initializer_list")
 {
   CONSTEXPR auto str = lefticus::tools::simple_stack_string<10>{ 'a', 'b', 'c', 'd' };
   STATIC_REQUIRE(str.size() == 4);
 }
 
 
-TEST_CASE("simple_stack_string can be created from const char *")
+TEST_CASE("[simple_stack_string] can be created from const char *")
 {
   CONSTEXPR auto str = lefticus::tools::simple_stack_string<10>{ "abcd" };
   STATIC_REQUIRE(str.size() == 4);
 }
 
-TEST_CASE("simple_stack_string can be created from string_view")
+TEST_CASE("[simple_stack_string] can be created from string_view")
 {
   CONSTEXPR auto sv = std::string_view{ "abcd" };
   CONSTEXPR auto str = lefticus::tools::simple_stack_string<10>{ sv };
@@ -44,7 +44,7 @@ TEST_CASE("simple_stack_string can be created from string_view")
 }
 
 
-TEST_CASE("simple_stack_string const reverse iterators work")
+TEST_CASE("[simple_stack_string] const reverse iterators work")
 {
   const auto reverse = [](const auto &input) {
     lefticus::tools::simple_stack_string<10> output;
@@ -63,7 +63,7 @@ TEST_CASE("simple_stack_string const reverse iterators work")
   STATIC_REQUIRE(reversed_3 == "dcba");
 }
 
-TEST_CASE("simple_stack_string c-reverse iterators work")
+TEST_CASE("[simple_stack_string] c-reverse iterators work")
 {
   const auto reverse = [](const auto &input) {
     lefticus::tools::simple_stack_string<10> output;
@@ -83,7 +83,7 @@ TEST_CASE("simple_stack_string c-reverse iterators work")
 }
 
 
-TEST_CASE("simple_stack_string reverse iterators work")
+TEST_CASE("[simple_stack_string] reverse iterators work")
 {
   const auto increment = [](auto input) {
     for (auto itr = input.rbegin(); itr != input.rend(); ++itr) { ++(*itr); }
@@ -101,7 +101,7 @@ TEST_CASE("simple_stack_string reverse iterators work")
   STATIC_REQUIRE(incrementd_3 == "bcde");
 }
 
-TEST_CASE("simple_stack_string + char string literal")
+TEST_CASE("[simple_stack_string] simple_stack_string + char string literal")
 {
   CONSTEXPR lefticus::tools::simple_stack_string<10> str{ "Hello" };
   CONSTEXPR auto hello_world = str + " World";
@@ -110,7 +110,7 @@ TEST_CASE("simple_stack_string + char string literal")
 }
 
 
-TEST_CASE("char string literal + simple_stack_string")
+TEST_CASE("[simple_stack_string] char string literal + simple_stack_string")
 {
   CONSTEXPR lefticus::tools::simple_stack_string<10> str{ " World" };
   CONSTEXPR auto hello_world = "Hello" + str;
@@ -118,7 +118,7 @@ TEST_CASE("char string literal + simple_stack_string")
   STATIC_REQUIRE(hello_world.capacity() == 14);
 }
 
-TEST_CASE("simple_stack_string + simple_stack_string")
+TEST_CASE("[simple_stack_string] simple_stack_string + simple_stack_string")
 {
   CONSTEXPR lefticus::tools::simple_stack_string<10> str1{ "Hello" };
   CONSTEXPR lefticus::tools::simple_stack_string<10> str2{ " World" };
@@ -127,7 +127,7 @@ TEST_CASE("simple_stack_string + simple_stack_string")
   STATIC_REQUIRE(hello_world.capacity() == 18);
 }
 
-TEST_CASE("basic_simple_stack_string CTAD")
+TEST_CASE("[simple_stack_string] basic_simple_stack_string CTAD")
 {
   CONSTEXPR lefticus::tools::basic_simple_stack_string str1{ "Hello" };
   STATIC_REQUIRE(str1.size() == 5);
@@ -136,7 +136,7 @@ TEST_CASE("basic_simple_stack_string CTAD")
 }
 
 
-TEST_CASE("simple_stack_string to_sss")
+TEST_CASE("[simple_stack_string] to_sss")
 {
   using namespace lefticus::tools::literals;
   CONSTEXPR auto str1 = to_sss("Hello");
@@ -145,7 +145,7 @@ TEST_CASE("simple_stack_string to_sss")
   STATIC_REQUIRE(decltype(str1)::total_capacity == 6);
 }
 
-TEST_CASE("simple_stack_string to_sss + to_sss")
+TEST_CASE("[simple_stack_string] to_sss + to_sss")
 {
   using namespace lefticus::tools::literals;
   CONSTEXPR auto str1 = to_sss("Hello") + to_sss(" World");
@@ -155,14 +155,14 @@ TEST_CASE("simple_stack_string to_sss + to_sss")
 }
 
 
-TEST_CASE("simple_stack_string simple_stack_string == string_view, sv == sss")
+TEST_CASE("[simple_stack_string] simple_stack_string == string_view, sv == sss")
 {
   using namespace lefticus::tools::literals;
   STATIC_REQUIRE(to_sss("Hello") == std::string_view{ "Hello" });
   STATIC_REQUIRE(std::string_view{ "Hello" } == to_sss("Hello"));
 }
 
-TEST_CASE("simple_stack_string simple_stack_string == const char *, const char * == sss")
+TEST_CASE("[simple_stack_string] simple_stack_string == const char *, const char * == sss")
 {
   using namespace lefticus::tools::literals;
   STATIC_REQUIRE(to_sss("Hello") == "Hello");

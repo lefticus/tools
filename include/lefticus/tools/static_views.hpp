@@ -68,7 +68,7 @@ consteval auto to_right_sized_array(creates_iterable auto callable)
   return result;
 }
 
-template<auto Data> constexpr const auto &make_static = Data;
+template<auto Data> inline constexpr const auto &make_static = Data;
 
 consteval auto to_string_view(creates_string_like auto callable)
 {

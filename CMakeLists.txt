@@ -89,6 +89,7 @@ dynamic_project_options(
   # if a file does not have an internalAstError, we get an unmatchedSuppression error
   --suppress=unmatchedSuppression
   --suppress=passedByValue
+  --suppress=syntaxError
   --inconclusive)
 
 target_compile_features(project_options INTERFACE cxx_std_${CMAKE_CXX_STANDARD})

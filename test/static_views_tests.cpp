@@ -135,7 +135,7 @@ template<typename T> using vector = lefticus::tools::simple_stack_vector<T, 16>;
 template<typename Key, typename Value> using map = lefticus::tools::simple_stack_flat_map<Key, Value, 16>;
 using string = lefticus::tools::simple_stack_string<16>;
 
-TEST_CASE("[minimized_stackify] works")// NOLINT (cognitive complexity)
+TEST_CASE("[minimized_stackify] works for maps")// NOLINT (cognitive complexity)
 {
   using namespace std::string_view_literals;
   const auto make_data = []() {

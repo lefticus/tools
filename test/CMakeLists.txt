@@ -24,7 +24,12 @@ add_library(catch_main OBJECT catch_main.cpp)
 target_link_libraries(catch_main PUBLIC Catch2::Catch2)
 target_link_libraries(catch_main PRIVATE tools::tools_options)
 
-target_link_libraries(tests PRIVATE tools::tools_warnings tools::tools_options catch_main)
+target_link_libraries(
+  tests
+  PRIVATE tools::tools
+          tools::tools_warnings
+          tools::tools_options
+          catch_main)
 
 # automatically discover tests that are defined in catch based test files you can modify the unittests. Set TEST_PREFIX
 # to whatever you want, or use different for different binaries
@@ -76,10 +81,19 @@ add_constexpr_test_executables(
   simple_stack_vector_tests.cpp
   static_views_tests.cpp
   simple_stack_string_tests.cpp
-  flat_map_tests.cpp
-  )
-target_link_libraries("constexpr_tests" PRIVATE tools::tools_options tools::tools_warnings catch_main)
-target_link_libraries("relaxed_constexpr_tests" PRIVATE tools::tools_options tools::tools_warnings catch_main)
+  flat_map_tests.cpp)
+target_link_libraries(
+  "constexpr_tests"
+  PRIVATE tools::tools
+          tools::tools_options
+          tools::tools_warnings
+          catch_main)
+target_link_libraries(
+  "relaxed_constexpr_tests"
+  PRIVATE tools::tools
+          tools::tools_options
+          tools::tools_warnings
+          catch_main)
 
 add_library(cpp17_catch_main OBJECT catch_main.cpp)
 target_link_libraries(cpp17_catch_main PUBLIC Catch2::Catch2)
@@ -88,21 +102,19 @@ add_constexpr_test_executables(
   cpp17_tests
   simple_stack_vector_tests.cpp
   simple_stack_string_tests.cpp
-  flat_map_tests.cpp
-)
+  flat_map_tests.cpp)
 
 target_include_directories(constexpr_cpp17_tests PRIVATE ../include)
 target_include_directories(relaxed_constexpr_cpp17_tests PRIVATE ../include)
-target_link_libraries("constexpr_cpp17_tests" PRIVATE tools::tools_warnings cpp17_catch_main)
-target_link_libraries("relaxed_constexpr_cpp17_tests" PRIVATE tools::tools_warnings cpp17_catch_main)
+target_link_libraries("constexpr_cpp17_tests" PRIVATE tools::tools tools::tools_warnings cpp17_catch_main)
+target_link_libraries("relaxed_constexpr_cpp17_tests" PRIVATE tools::tools tools::tools_warnings cpp17_catch_main)
 
 set_property(TARGET cpp17_catch_main constexpr_cpp17_tests relaxed_constexpr_cpp17_tests PROPERTY CXX_STANDARD 17)
-
 
 function(test_header_compiles header_name)
   file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/${header_name}_compile_test.cpp" "#include <lefticus/tools/${header_name}>")
   add_library("${header_name}_compile_test" STATIC "${CMAKE_CURRENT_BINARY_DIR}/${header_name}_compile_test.cpp")
-  target_link_libraries("${header_name}_compile_test" PRIVATE tools::tools_warnings tools::tools_options)
+  target_link_libraries("${header_name}_compile_test" PRIVATE tools::tools tools::tools_warnings tools::tools_options)
 endfunction()
 
 test_header_compiles(simple_stack_string.hpp)

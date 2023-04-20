@@ -1,4 +1,4 @@
-function(check_libfuzzer_support var_name)
+function(lefticus_tools_check_libfuzzer_support var_name)
   set(LibFuzzerTestSource
       "
 #include <cstdint>

@@ -7,7 +7,7 @@
 # target_link_libraries(main_cuda PRIVATE project_options project_warnings)
 # target_link_cuda(main_cuda)
 #
-macro(target_link_cuda target)
+macro(lefticus_tools_target_link_cuda target)
   # optional named CUDA_WARNINGS
   set(oneValueArgs CUDA_WARNINGS)
   cmake_parse_arguments(

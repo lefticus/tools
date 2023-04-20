@@ -1,7 +1,7 @@
 include(CheckCXXCompilerFlag)
 
 macro(
-  enable_hardening
+  lefticus_tools_enable_hardening
   target
   global
   ubsan_minimal_runtime)

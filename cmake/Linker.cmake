@@ -1,4 +1,4 @@
-macro(configure_linker project_name)
+macro(lefticus_tools_configure_linker project_name)
   include(CheckCXXCompilerFlag)
 
   set(USER_LINKER_OPTION

@@ -46,7 +46,11 @@ string(
             GIT_SHORT_SHA)
 
 target_compile_features(tools_options INTERFACE cxx_std_${CMAKE_CXX_STANDARD})
-target_include_directories(tools_options INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+
+add_library(tools INTERFACE)
+add_library(tools::tools ALIAS tools)
+
+target_include_directories(tools INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 add_library(tools::tools_options ALIAS tools_options)
 add_library(tools::tools_warnings ALIAS tools_warnings)

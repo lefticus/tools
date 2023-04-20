@@ -86,15 +86,15 @@ TEST_CASE("[simple_stack_vector] push_back works")
 {
   const auto create = []() {
     lefticus::tools::simple_stack_vector<int, STACK_SIZE> vec;
-    vec.push_back(5); // NOLINT Magic Number
-    vec.push_back(10); // NOLINT Magic Number
+    vec.push_back(5);// NOLINT Magic Number
+    vec.push_back(10);// NOLINT Magic Number
     return vec;
   };
 
   CONSTEXPR auto vec = create();
   STATIC_REQUIRE(vec.size() == 2);
-  STATIC_REQUIRE(vec[0] == 5); // NOLINT Magic Number
-  STATIC_REQUIRE(vec[1] == 10); // NOLINT Magic Number
+  STATIC_REQUIRE(vec[0] == 5);// NOLINT Magic Number
+  STATIC_REQUIRE(vec[1] == 10);// NOLINT Magic Number
 }
 
 TEST_CASE("[simple_stack_vector] emplace_back works")
@@ -102,7 +102,7 @@ TEST_CASE("[simple_stack_vector] emplace_back works")
   const auto create = []() {
     lefticus::tools::simple_stack_vector<lefticus::tools::pair<int, int>, STACK_SIZE> vec;
     vec.emplace_back(1, 2);
-    vec.emplace_back(3, 4).second = 5; // NOLINT Magic Number
+    vec.emplace_back(3, 4).second = 5;// NOLINT Magic Number
     return vec;
   };
 

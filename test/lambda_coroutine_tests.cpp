@@ -10,7 +10,7 @@
 #endif
 
 
-CONSTEXPR std::array<unsigned long long, 10> get_first_10() // NOLINT magic number
+CONSTEXPR std::array<unsigned long long, 10> get_first_10()// NOLINT magic number
 {
   auto fib = [state = 0, fib_2 = 0ULL, fib_1 = 1ULL]() mutable -> std::optional<unsigned long long> {
     lambda_co_begin(state);
@@ -26,16 +26,16 @@ CONSTEXPR std::array<unsigned long long, 10> get_first_10() // NOLINT magic numb
     lambda_co_return({});
   };
 
-  const auto val_1 = fib().value(); // NOLINT Unchecked access
-  const auto val_2 = fib().value(); // NOLINT Unchecked access
-  const auto val_3 = fib().value(); // NOLINT Unchecked access
-  const auto val_4 = fib().value(); // NOLINT Unchecked access
-  const auto val_5 = fib().value(); // NOLINT Unchecked access
-  const auto val_6 = fib().value(); // NOLINT Unchecked access
-  const auto val_7 = fib().value(); // NOLINT Unchecked access
-  const auto val_8 = fib().value(); // NOLINT Unchecked access
-  const auto val_9 = fib().value(); // NOLINT Unchecked access
-  const auto val_10 = fib().value(); // NOLINT Unchecked access
+  const auto val_1 = fib().value();// NOLINT Unchecked access
+  const auto val_2 = fib().value();// NOLINT Unchecked access
+  const auto val_3 = fib().value();// NOLINT Unchecked access
+  const auto val_4 = fib().value();// NOLINT Unchecked access
+  const auto val_5 = fib().value();// NOLINT Unchecked access
+  const auto val_6 = fib().value();// NOLINT Unchecked access
+  const auto val_7 = fib().value();// NOLINT Unchecked access
+  const auto val_8 = fib().value();// NOLINT Unchecked access
+  const auto val_9 = fib().value();// NOLINT Unchecked access
+  const auto val_10 = fib().value();// NOLINT Unchecked access
 
 
   return { val_1, val_2, val_3, val_4, val_5, val_6, val_7, val_8, val_9, val_10 };

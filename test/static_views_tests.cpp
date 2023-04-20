@@ -35,8 +35,8 @@ TEST_CASE("to_string_view produces a std::string_view from std::string")
 #if __cpp_lib_constexpr_vector >= 201907L
 constexpr std::vector<double> make_vector()
 {
-  std::vector result{ 1.2, 2.4 }; // NOLINT Magic Number
-  result.push_back(3.6); // NOLINT Magic Number
+  std::vector result{ 1.2, 2.4 };// NOLINT Magic Number
+  result.push_back(3.6);// NOLINT Magic Number
   return result;
 }
 
@@ -60,7 +60,7 @@ TEST_CASE("[to_span] produces an std::span from simple_stack_vector")
 {
   CONSTEXPR const auto result = lefticus::tools::to_span([]() { return make_vector_like(); });
   static_assert(std::is_same_v<decltype(result), const std::span<const double>>);
-  STATIC_REQUIRE(result[0] == 1.2); // NOLINT Magic Number
+  STATIC_REQUIRE(result[0] == 1.2);// NOLINT Magic Number
   STATIC_REQUIRE(result.size() == 3);
 }
 

@@ -13,8 +13,8 @@ TEST_CASE("[int_np] UDLs work")
 {
   using namespace lefticus::tools::literals;
 
-  CONSTEXPR const auto i1 = 1_np8;
-  static_assert(std::is_same_v<decltype(i1), const lefticus::tools::int_np<std::int8_t>>);
+  CONSTEXPR const auto npint1 = 1_np8;
+  static_assert(std::is_same_v<decltype(npint1), const lefticus::tools::int_np<std::int8_t>>);
 }
 
 
@@ -22,24 +22,24 @@ TEST_CASE("[int_np] npint + int = npint")
 {
   using namespace lefticus::tools::literals;
 
-  CONSTEXPR const auto i1 = 1_np8 + std::int8_t{ 2 };
-  static_assert(std::is_same_v<decltype(i1), const lefticus::tools::int_np<std::int8_t>>);
+  CONSTEXPR const auto npint1 = 1_np8 + std::int8_t{ 2 };
+  static_assert(std::is_same_v<decltype(npint1), const lefticus::tools::int_np<std::int8_t>>);
 }
 
 TEST_CASE("[int_np] int + npint = npint")
 {
   using namespace lefticus::tools::literals;
 
-  CONSTEXPR const auto i1 = std::int8_t{ 2 } + 1_np8;
-  static_assert(std::is_same_v<decltype(i1), const lefticus::tools::int_np<std::int8_t>>);
+  CONSTEXPR const auto npint1 = std::int8_t{ 2 } + 1_np8;
+  static_assert(std::is_same_v<decltype(npint1), const lefticus::tools::int_np<std::int8_t>>);
 }
 
 TEST_CASE("[int_np] (npint << int) = npint")
 {
   using namespace lefticus::tools::literals;
 
-  CONSTEXPR const auto i1 = 1_np8 << 2;
-  static_assert(std::is_same_v<decltype(i1), const lefticus::tools::int_np<std::int8_t>>);
+  CONSTEXPR const auto npint1 = 1_np8 << 2;
+  static_assert(std::is_same_v<decltype(npint1), const lefticus::tools::int_np<std::int8_t>>);
 }
 
 

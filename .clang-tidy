@@ -8,8 +8,6 @@ Checks: "*,
         -llvm*,
         -modernize-use-trailing-return-type,
         -zircon-*,
-        -cppcoreguidelines-avoid-magic-numbers,
-        -readability-magic-numbers,
         -readability-else-after-return,
         -readability-static-accessed-through-instance,
         -readability-avoid-const-params-in-decls,
@@ -20,6 +18,11 @@ WarningsAsErrors: ''
 HeaderFilterRegex: ''
 FormatStyle:     none
 
+CheckOptions:
+  - key: readability-identifier-length.IgnoredVariableNames
+    value: 'x|y|z'
+  - key: readability-identifier-length.IgnoredParameterNames
+    value: 'x|y|z'
 
 
 

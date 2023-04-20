@@ -94,7 +94,9 @@ macro(lefticus_tools_global_options)
 endmacro()
 
 macro(lefticus_tools_local_options)
-  include(cmake/StandardProjectSettings.cmake)
+  if (PROJECT_IS_TOP_LEVEL)
+    include(cmake/StandardProjectSettings.cmake)
+  endif()
 
   add_library(lefticus_tools_warnings INTERFACE)
   add_library(lefticus_tools_options INTERFACE)

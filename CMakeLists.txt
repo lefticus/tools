@@ -25,13 +25,13 @@ project(
 include(cmake/PreventInSourceBuilds.cmake)
 include(ProjectOptions.cmake)
 
-setup_options()
+lefticus_tools_setup_options()
 
-global_options()
+lefticus_tools_global_options()
 include(Dependencies.cmake)
-setup_dependencies()
+lefticus_tools_setup_dependencies()
 
-local_options()
+lefticus_tools_local_options()
 
 # don't know if this should be set globally from here or not...
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
@@ -45,15 +45,15 @@ string(
             8
             GIT_SHORT_SHA)
 
-target_compile_features(tools_options INTERFACE cxx_std_${CMAKE_CXX_STANDARD})
+target_compile_features(lefticus_tools_options INTERFACE cxx_std_${CMAKE_CXX_STANDARD})
 
 add_library(tools INTERFACE)
-add_library(tools::tools ALIAS tools)
+add_library(lefticus::tools ALIAS tools)
 
 target_include_directories(tools INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-add_library(tools::tools_options ALIAS tools_options)
-add_library(tools::tools_warnings ALIAS tools_warnings)
+add_library(lefticus::tools_options ALIAS lefticus_tools_options)
+add_library(lefticus::tools_warnings ALIAS lefticus_tools_warnings)
 
 
 
@@ -70,7 +70,7 @@ if(BUILD_TESTING)
 endif()
 
 
-if(tools_BUILD_FUZZ_TESTS)
+if(lefticus_tools_BUILD_FUZZ_TESTS)
   add_subdirectory(fuzz_test)
 endif()
 

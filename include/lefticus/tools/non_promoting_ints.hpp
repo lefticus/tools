@@ -11,6 +11,10 @@ template<std::integral Type> struct int_np
 {
   using value_type = Type;
 
+private:
+  value_type value;
+
+public:
   // if it's the proper type, make it easy to convert
   // cppcheck-suppress noExplicitConstructor
   constexpr int_np(value_type value_) noexcept : value{ value_ } {}
@@ -199,9 +203,6 @@ template<std::integral Type> struct int_np
   }
 
   friend constexpr auto operator<=>(const int_np &, const int_np &) = default;
-
-private:
-  value_type value;
 };
 
 using uint_np8_t = int_np<std::uint8_t>;

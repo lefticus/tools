@@ -5,6 +5,9 @@
 #include <concepts>
 #include <cstdint>
 
+#ifdef __INTELLISENSE__
+  #pragma diag_suppress 349
+#endif
 
 namespace lefticus::tools {
 template<std::integral Type> struct int_np

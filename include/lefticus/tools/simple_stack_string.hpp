@@ -120,13 +120,13 @@ struct basic_simple_stack_string
 
   [[nodiscard]] constexpr value_type &at(const std::size_t idx)
   {
-    if (idx >= size_) { throw std::out_of_range("index past end of stack_vector"); }
+    if (idx >= size_) { throw std::out_of_range("index past end of stack_string"); }
     return data_[idx];
   }
 
   [[nodiscard]] constexpr const value_type &at(const std::size_t idx) const
   {
-    if (idx >= size_) { throw std::out_of_range("index past end of stack_vector"); }
+    if (idx >= size_) { throw std::out_of_range("index past end of stack_string"); }
     return data_[idx];
   }
 

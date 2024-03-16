@@ -55,7 +55,15 @@ macro(lefticus_tools_setup_options)
     option(lefticus_tools_ENABLE_SANITIZER_THREAD "Enable thread sanitizer" OFF)
     option(lefticus_tools_ENABLE_SANITIZER_MEMORY "Enable memory sanitizer" OFF)
     option(lefticus_tools_ENABLE_UNITY_BUILD "Enable unity builds" OFF)
-    option(lefticus_tools_ENABLE_CLANG_TIDY "Enable clang-tidy" ON)
+
+    # Only enable clang-tidy by default if we're targetting clang.
+    # Why? because you might have other flags and settings that don't work
+    # Between clang and gcc
+    if (CMAKE_CXX_COMPILER_ID MATCHES ".*Clang.*")
+      option(lefticus_tools_ENABLE_CLANG_TIDY "Enable clang-tidy" ON)
+    else()
+      option(lefticus_tools_ENABLE_CLANG_TIDY "Enable clang-tidy" OFF)
+    endif()
     option(lefticus_tools_ENABLE_CPPCHECK "Enable cpp-check analysis" OFF)
     option(lefticus_tools_ENABLE_PCH "Enable precompiled headers" OFF)
     option(lefticus_tools_ENABLE_CACHE "Enable ccache" ON)

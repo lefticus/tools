@@ -17,9 +17,12 @@ macro(
     set(NEW_CXX_DEFINITIONS "${NEW_CXX_DEFINITIONS} -D_GLIBCXX_ASSERTIONS")
     message(STATUS "*** GLIBC++ Assertions (vector[], string[], ...) enabled")
 
+    # Hardening requires some amount of optimization enabled
+    if (CMAKE_BUILD_TYPE MATCHES ".*Rel.*")
     set(NEW_COMPILE_OPTIONS
         "${NEW_COMPILE_OPTIONS} -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=3")
     message(STATUS "*** g++/clang _FORTIFY_SOURCE=3 enabled")
+    endif()
 
     #    check_cxx_compiler_flag(-fpie PIE)
     #if(PIE)

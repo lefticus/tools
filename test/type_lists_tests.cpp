@@ -1,37 +1,57 @@
-//
-// Created by jason on 3/12/24.
-//
-
-
+#include <catch2/catch.hpp>
 #include <lefticus/tools/type_lists.hpp>
 
-static_assert(std::is_same_v<int, nth_t<2, type_list<float, double, int>>>);
-static_assert(std::is_same_v<double, nth_t<1, type_list<float, double, int>>>);
-static_assert(std::is_same_v<float, nth_t<0, type_list<float, double, int>>>);
 
-static_assert(std::is_same_v<double, nth_t<0, type_list<double>>>);
+TEST_CASE("Test nth type getter")
+{
+  STATIC_REQUIRE(std::is_same_v<int, lefticus::tools::nth_t<2, lefticus::tools::type_list<float, double, int>>>);
+  STATIC_REQUIRE(std::is_same_v<double, lefticus::tools::nth_t<1, lefticus::tools::type_list<float, double, int>>>);
+  STATIC_REQUIRE(std::is_same_v<float, lefticus::tools::nth_t<0, lefticus::tools::type_list<float, double, int>>>);
 
-static_assert(
-  std::is_same_v<type_pair<type_list<>, type_list<float, double, int>>, split_n_t<0, type_list<float, double, int>>>);
+  STATIC_REQUIRE(std::is_same_v<double, lefticus::tools::nth_t<0, lefticus::tools::type_list<double>>>);
+}
 
-static_assert(
-  std::is_same_v<type_pair<type_list<float>, type_list<double, int>>, split_n_t<1, type_list<float, double, int>>>);
 
-static_assert(
-  std::is_same_v<type_pair<type_list<float, double>, type_list<int>>, split_n_t<2, type_list<float, double, int>>>);
+TEST_CASE("Test split_n type list splitter")
+{
+  STATIC_REQUIRE(std::is_same_v<
+    lefticus::tools::type_pair<lefticus::tools::type_list<>, lefticus::tools::type_list<float, double, int>>,
+    lefticus::tools::split_n_t<0, lefticus::tools::type_list<float, double, int>>>);
 
-static_assert(
-  std::is_same_v<type_pair<type_list<float, double, int>, type_list<>>, split_n_t<3, type_list<float, double, int>>>);
+  STATIC_REQUIRE(std::is_same_v<
+    lefticus::tools::type_pair<lefticus::tools::type_list<float>, lefticus::tools::type_list<double, int>>,
+    lefticus::tools::split_n_t<1, lefticus::tools::type_list<float, double, int>>>);
 
-static_assert(std::is_same_v<type_list<float, double, int>, join_t<type_list<>, type_list<float, double, int>>>);
+  STATIC_REQUIRE(std::is_same_v<
+    lefticus::tools::type_pair<lefticus::tools::type_list<float, double>, lefticus::tools::type_list<int>>,
+    lefticus::tools::split_n_t<2, lefticus::tools::type_list<float, double, int>>>);
 
-static_assert(std::is_same_v<type_list<float, double, int>, join_t<type_list<float>, type_list<double, int>>>);
-static_assert(std::is_same_v<type_list<float, double, int>, join_t<type_list<float, double>, type_list<int>>>);
+  STATIC_REQUIRE(std::is_same_v<
+    lefticus::tools::type_pair<lefticus::tools::type_list<float, double, int>, lefticus::tools::type_list<>>,
+    lefticus::tools::split_n_t<3, lefticus::tools::type_list<float, double, int>>>);
+}
 
-static_assert(std::is_same_v<type_list<float, double, int>, join_t<type_list<float, double, int>, type_list<>>>);
 
-static_assert(std::is_same_v<type_list<>, sub_t<0, 0, type_list<float, double, int>>>);
-static_assert(std::is_same_v<type_list<float>, sub_t<0, 1, type_list<float, double, int>>>);
-static_assert(std::is_same_v<type_list<double, int>, sub_t<1, 2, type_list<float, double, int>>>);
+TEST_CASE("Test join type list joiner")
+{
+  STATIC_REQUIRE(std::is_same_v<lefticus::tools::type_list<float, double, int>,
+    lefticus::tools::join_t<lefticus::tools::type_list<>, lefticus::tools::type_list<float, double, int>>>);
 
-// static_assert(std::is_same_v<double, first_type<double>>);
+  STATIC_REQUIRE(std::is_same_v<lefticus::tools::type_list<float, double, int>,
+    lefticus::tools::join_t<lefticus::tools::type_list<float>, lefticus::tools::type_list<double, int>>>);
+  STATIC_REQUIRE(std::is_same_v<lefticus::tools::type_list<float, double, int>,
+    lefticus::tools::join_t<lefticus::tools::type_list<float, double>, lefticus::tools::type_list<int>>>);
+
+  STATIC_REQUIRE(std::is_same_v<lefticus::tools::type_list<float, double, int>,
+    lefticus::tools::join_t<lefticus::tools::type_list<float, double, int>, lefticus::tools::type_list<>>>);
+}
+
+TEST_CASE("Test sub type list sub list splitter")
+{
+  STATIC_REQUIRE(std::is_same_v<lefticus::tools::type_list<>,
+    lefticus::tools::sub_t<0, 0, lefticus::tools::type_list<float, double, int>>>);
+  STATIC_REQUIRE(std::is_same_v<lefticus::tools::type_list<float>,
+    lefticus::tools::sub_t<0, 1, lefticus::tools::type_list<float, double, int>>>);
+  STATIC_REQUIRE(std::is_same_v<lefticus::tools::type_list<double, int>,
+    lefticus::tools::sub_t<1, 2, lefticus::tools::type_list<float, double, int>>>);
+}

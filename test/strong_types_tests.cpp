@@ -2,8 +2,15 @@
 // Created by jason on 3/12/24.
 //
 
-
+#include <catch2/catch.hpp>
 #include <lefticus/tools/strong_types.hpp>
+
+#ifdef CATCH_CONFIG_RUNTIME_STATIC_REQUIRE
+#define CONSTEXPR
+#else
+// NOLINTNEXTLINE
+#define CONSTEXPR constexpr
+#endif
 
 // we could have auto detected the capabilities, by using requires
 // but that would have enabled more operations than we wanted.
@@ -39,24 +46,24 @@ auto equate(Player_Position, Player_Position) -> bool;
 auto order(Player_Position, Player_Position) -> bool;
 */
 
-using Position = strong_alias<Point, struct Pos>;
-using Time = strong_alias<float, struct Tim>;
+using Position = lefticus::tools::strong_alias<Point, struct Pos>;
+using Time = lefticus::tools::strong_alias<float, struct Tim>;
 
 auto order(Position, Position) -> bool;
 auto order(Time, Time) -> bool;
 
-using Player1_Position = strong_alias<Point, struct Pos1>;
-using Player1_Velocity = strong_alias<Point, struct Vel1>;
-using Player1_Displacement = strong_alias<Point, struct Dis1>;
+using Player1_Position = lefticus::tools::strong_alias<Point, struct Pos1>;
+using Player1_Velocity = lefticus::tools::strong_alias<Point, struct Vel1>;
+using Player1_Displacement = lefticus::tools::strong_alias<Point, struct Dis1>;
 
 auto add(Player1_Position, Player1_Displacement) -> Player1_Position;
 auto add(Player1_Displacement, Player1_Position) -> Player1_Position;
 auto multiply(Time, Player1_Velocity) -> Player1_Displacement;
 auto multiply(Player1_Velocity, Time) -> Player1_Displacement;
 
-using Player2_Position = strong_alias<Point, struct Pos2>;
-using Player2_Velocity = strong_alias<Point, struct Vel2>;
-using Player2_Displacement = strong_alias<Point, struct Dis2>;
+using Player2_Position = lefticus::tools::strong_alias<Point, struct Pos2>;
+using Player2_Velocity = lefticus::tools::strong_alias<Point, struct Vel2>;
+using Player2_Displacement = lefticus::tools::strong_alias<Point, struct Dis2>;
 
 auto add(Player2_Position, Player2_Displacement) -> Player2_Position;
 auto add(Player2_Displacement, Player2_Position) -> Player2_Position;
@@ -78,22 +85,22 @@ struct Player2
 {
 };
 
-void draw(Avatar, Position);
+void draw(Avatar, Position) {}
 
-auto get_avatar(Player1, Time) -> Avatar;
-auto get_avatar(Player2, Time) -> Avatar;
+auto get_avatar(Player1, Time) -> Avatar { return {}; }
+auto get_avatar(Player2, Time) -> Avatar { return {}; }
 
-auto get_position(Player1) -> Player1_Position;
-auto get_position(Player2) -> Player2_Position;
+auto get_position(Player1) -> Player1_Position { return Player1_Position{}; }
+auto get_position(Player2) -> Player2_Position { return Player2_Position{}; }
 
-auto get_displacement(Player1) -> Player1_Displacement;
-auto get_displacement(Player2) -> Player2_Displacement;
+auto get_displacement(Player1) -> Player1_Displacement { return Player1_Displacement{}; }
+auto get_displacement(Player2) -> Player2_Displacement { return Player2_Displacement{}; }
 
-auto get_velocity(Player1) -> Player1_Velocity;
-auto get_velocity(Player2) -> Player2_Velocity;
+auto get_velocity(Player1) -> Player1_Velocity { return Player1_Velocity{}; }
+auto get_velocity(Player2) -> Player2_Velocity { return Player2_Velocity{}; }
 
-auto get_player1() -> Player1;
-auto get_player2() -> Player2;
+auto get_player1() -> Player1 { return {}; }
+auto get_player2() -> Player2 { return {}; }
 
 void draw_players(Time t)
 {
@@ -105,16 +112,18 @@ void draw_players(Time t)
   do_draw(get_player1());
 }
 
-using Pattern = strong_alias<std::string, struct Pat>;
-using Directory = strong_alias<std::filesystem::path, struct Dir, []([[maybe_unused]] const std::filesystem::path &p) {
-  [[maybe_unused]] std::error_code ec;
-  assert(!std::filesystem::is_regular_file(p, ec));
-}>;
+using Pattern = lefticus::tools::strong_alias<std::string, struct Pat>;
+using Directory =
+  lefticus::tools::strong_alias<std::filesystem::path, struct Dir, []([[maybe_unused]] const std::filesystem::path &p) {
+    [[maybe_unused]] std::error_code ec;
+    assert(!std::filesystem::is_regular_file(p, ec));
+  }>;
 
-using File = strong_alias<std::filesystem::path, struct Fil, []([[maybe_unused]] const std::filesystem::path &p) {
-  [[maybe_unused]] std::error_code ec;
-  assert(!std::filesystem::is_directory(p, ec));
-}>;
+using File =
+  lefticus::tools::strong_alias<std::filesystem::path, struct Fil, []([[maybe_unused]] const std::filesystem::path &p) {
+    [[maybe_unused]] std::error_code ec;
+    assert(!std::filesystem::is_directory(p, ec));
+  }>;
 
 auto order(File, File) -> bool;
 auto equate(File, File) -> bool;
@@ -125,7 +134,10 @@ auto equate(Pattern, Pattern) -> bool;
 auto divide(Directory, Directory) -> Directory;
 auto divide(Directory, File) -> File;
 
-bool matches(const Pattern &pattern, const std::filesystem::path &path);
+bool matches([[maybe_unused]] const Pattern &pattern, [[maybe_unused]] const std::filesystem::path &path)
+{
+  return false;
+}
 
 std::optional<File> find_first_file(const Directory &dir, const Pattern &pattern)
 {
@@ -138,29 +150,30 @@ std::optional<File> find_first_file(const Directory &dir, const Pattern &pattern
   return {};
 }
 
+
 template<typename LHS, typename RHS> consteval bool types_equatable()
 {
   return requires(LHS lhs, RHS rhs) { lhs == rhs; };
 }
 
-int main()
+TEST_CASE("Strong types sanity checks")
 {
-  constexpr Player1_Position p{ 2.0f, 3.0f };
-  constexpr Player1_Velocity v{ -1.0f, 2.0f };
-  constexpr Time t{ 4.0f };
+  CONSTEXPR Player1_Position p{ 2.0f, 3.0f };
+  CONSTEXPR Player1_Velocity v{ -1.0f, 2.0f };
+  CONSTEXPR Time t{ 4.0f };
 
-  static_assert(std::is_same_v<decltype(v * t), Player1_Displacement>);
-  static_assert(std::is_same_v<decltype(t * v), Player1_Displacement>);
-  static_assert(std::is_same_v<decltype(p + (t * v)), Player1_Position>);
+  STATIC_REQUIRE(std::is_same_v<decltype(v * t), Player1_Displacement>);
+  STATIC_REQUIRE(std::is_same_v<decltype(t * v), Player1_Displacement>);
+  STATIC_REQUIRE(std::is_same_v<decltype(p + (t * v)), Player1_Position>);
 
-  static_assert(!types_equatable<Player1_Position, Player1_Position>());
-  static_assert(!types_equatable<Player1_Velocity, Player1_Position>());
-  static_assert(!types_equatable<Player1_Velocity, Player1_Velocity>());
+  STATIC_REQUIRE(!types_equatable<Player1_Position, Player1_Position>());
+  STATIC_REQUIRE(!types_equatable<Player1_Velocity, Player1_Position>());
+  STATIC_REQUIRE(!types_equatable<Player1_Velocity, Player1_Velocity>());
 
-  static_assert((p + (t * v)).get() == Point{ 2.0f + (-1.0f * 4.0f), 3.0f + (2.0f * 4.0f) });
+
+  STATIC_REQUIRE((p + (t * v)).get() == Point{ 2.0f + (-1.0f * 4.0f), 3.0f + (2.0f * 4.0f) });
 
   auto f = find_first_file(Directory{ "/home/jason" }, Pattern{ "*.txt" });
 
   draw_players(Time{ 4.3f });
 }
-

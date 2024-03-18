@@ -57,18 +57,16 @@ template<typename... T> auto last_type(type_list<T...>) -> decltype((type_list<T
 template<typename First, typename... T> auto first_type(type_list<First, T...>) -> First;
 
 template<std::size_t N, typename First, typename... T>
-auto nth_type_helper(type_list<First, T...>) -> First
-  requires(N == 0);
+auto nth_type_helper(type_list<First, T...>) -> First requires(N == 0);
 
 // This is an optimization if we detect it's just the last one, so we don't
 // recurse further
 template<std::size_t N, typename... T>
-auto nth_type_helper(type_list<T...> list) -> decltype(last_type(list))
-  requires(N > 0 && N == sizeof...(T) - 1);
+auto nth_type_helper(type_list<T...> list) -> decltype(last_type(list)) requires(N > 0 && N == sizeof...(T) - 1);
 
 template<std::size_t N, typename First, typename... T>
-auto nth_type_helper(type_list<First, T...> list) -> decltype(nth_type_helper<N - 1>(type_list<T...>{}))
-  requires(N > 0 && N != sizeof...(T));
+auto nth_type_helper(type_list<First, T...> list)
+  -> decltype(nth_type_helper<N - 1>(type_list<T...>{})) requires(N > 0 && N != sizeof...(T));
 
 template<std::size_t N, typename... T> auto nth_type(type_list<T...> list) -> decltype(nth_type_helper<N>(list));
 
@@ -76,12 +74,11 @@ template<std::size_t N, typename T> using nth_t = decltype(nth_type<N>(T{}));
 
 template<std::size_t N, typename... Last, typename... T>
 auto split_n_helper(type_list<Last...> last, type_list<T...>) -> type_pair<type_list<Last...>, type_list<T...>>
-  requires(N == 0);
+requires(N == 0);
 
 template<std::size_t N, typename First, typename... Last, typename... T>
 auto split_n_helper(type_list<Last...>, type_list<First, T...>)
-  -> decltype(split_n_helper<N - 1>(type_list<Last..., First>{}, type_list<T...>{}))
-  requires(N > 0);
+  -> decltype(split_n_helper<N - 1>(type_list<Last..., First>{}, type_list<T...>{})) requires(N > 0);
 
 template<std::size_t N, typename... T>
 auto split_n(type_list<T...> list) -> decltype(split_n_helper<N>(type_list<>{}, list));

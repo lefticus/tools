@@ -179,7 +179,7 @@ public:
 
   constexpr int_np &operator%=(const std::integral auto rhs) &noexcept
   {
-    value = static_cast<value_type>(value / rhs);
+    value = static_cast<value_type>(value % rhs);
     return *this;
   }
 
@@ -226,7 +226,7 @@ public:
 
   constexpr int_np &operator%=(const int_np rhs) &noexcept
   {
-    value = static_cast<value_type>(value / rhs.value);
+    value = static_cast<value_type>(value % rhs.value);
     return *this;
   }
 

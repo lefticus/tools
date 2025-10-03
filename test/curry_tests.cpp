@@ -17,4 +17,5 @@ TEST_CASE("[curry] lambda")
   STATIC_REQUIRE(lefticus::tools::curry(func)(1, 2, 3) == 6);
   STATIC_REQUIRE(lefticus::tools::curry(func, 1)(2, 3) == 6);
   STATIC_REQUIRE(lefticus::tools::curry(func, 1, 2)(3) == 6);
+  STATIC_REQUIRE(lefticus::tools::curry(func, 1, 2, 3) == 6);
 }

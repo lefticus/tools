@@ -83,7 +83,8 @@ add_constexpr_test_executables(
   simple_stack_string_tests.cpp
   flat_map_tests.cpp
   type_lists_tests.cpp
-  strong_types_tests.cpp)
+  strong_types_tests.cpp
+  moving_ref.cpp)
 target_link_libraries(
   "constexpr_tests"
   PRIVATE lefticus::tools
@@ -132,3 +133,4 @@ test_header_compiles(static_views.hpp)
 test_header_compiles(utility.hpp)
 test_header_compiles(strong_types.hpp)
 test_header_compiles(type_lists.hpp)
+test_header_compiles(moving_ref.hpp)

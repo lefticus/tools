@@ -245,22 +245,22 @@ using int_np64_t = int_np<std::int64_t>;
 
 namespace literals {
 
-  consteval auto operator"" _npu8(unsigned long long val) { return uint_np8_t::from(val); }
+  consteval auto operator""_npu8(unsigned long long val) { return uint_np8_t::from(val); }
 
-  consteval auto operator"" _npu16(unsigned long long val) { return uint_np16_t::from(val); }
+  consteval auto operator""_npu16(unsigned long long val) { return uint_np16_t::from(val); }
 
-  consteval auto operator"" _npu32(unsigned long long val) { return uint_np32_t::from(val); }
+  consteval auto operator""_npu32(unsigned long long val) { return uint_np32_t::from(val); }
 
-  consteval auto operator"" _npu64(unsigned long long val) { return uint_np64_t::from(val); }
+  consteval auto operator""_npu64(unsigned long long val) { return uint_np64_t::from(val); }
 
 
-  consteval auto operator"" _np8(unsigned long long val) { return int_np8_t::from(val); }
+  consteval auto operator""_np8(unsigned long long val) { return int_np8_t::from(val); }
 
-  consteval auto operator"" _np16(unsigned long long val) { return int_np16_t::from(val); }
+  consteval auto operator""_np16(unsigned long long val) { return int_np16_t::from(val); }
 
-  consteval auto operator"" _np32(unsigned long long val) { return int_np32_t::from(val); }
+  consteval auto operator""_np32(unsigned long long val) { return int_np32_t::from(val); }
 
-  consteval auto operator"" _np64(unsigned long long val) { return int_np64_t::from(val); }
+  consteval auto operator""_np64(unsigned long long val) { return int_np64_t::from(val); }
 }// namespace literals
 
 }// namespace lefticus::tools

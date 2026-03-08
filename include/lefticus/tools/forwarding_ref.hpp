@@ -26,42 +26,37 @@ For more information, please refer to <https://unlicense.org>
 */
 
 
-#ifndef LEFTICUS_TOOLS_MOVING_REF_HPP
-#define LEFTICUS_TOOLS_MOVING_REF_HPP
+#ifndef LEFTICUS_TOOLS_FORWARDING_REF_HPP
+#define LEFTICUS_TOOLS_FORWARDING_REF_HPP
 
-#include "has_move_ctor.hpp"
+#include <type_traits>
+
 #include "lifetimebound.hpp"
 
 namespace lefticus::tools {
 
-template<typename T>
-concept movable = std::is_move_constructible_v<T> && std::is_move_assignable_v<T> && not std::is_const_v<
-                    T> && not std::is_pointer_v<T> && not std::is_reference_v<T>;
-
-template<typename T>
-requires movable<T> && has_move_ctor<T>
-struct [[nodiscard]] moving_ref
+template<typename T> struct [[nodiscard]] forwarding_ref
 {
-  using value_type = T;
-  using pointer_type = std::add_pointer_t<T>;
-  using reference_type = std::add_rvalue_reference_t<T>;
+  using pointer_type = std::add_pointer_t<std::remove_reference_t<T>>;
+  using reference_type = T;
 
-  moving_ref(moving_ref &&) = delete (
+  forwarding_ref(forwarding_ref &&) = delete (
     "you accidentally moved a ref (auto obj = std::move(ref)) instead of (Type obj = ref)");
-  moving_ref(const moving_ref &) = delete (
+  forwarding_ref(const forwarding_ref &) = delete (
     "you accidentally copied a ref (auto obj = ref) instead of (Type obj = ref)");
-  moving_ref &operator=(moving_ref &&) = delete ("you accidentally move assigned a ref (ref = std::move(other_ref))");
-  moving_ref &operator=(const moving_ref &) = delete ("you accidentally copy assigned a ref (ref = other_ref)");
+  forwarding_ref &operator=(forwarding_ref &&) = delete (
+    "you accidentally move assigned a ref (ref = std::move(other_ref))");
+  forwarding_ref &operator=(const forwarding_ref &) = delete ("you accidentally copy assigned a ref (ref = other_ref)");
 
-  [[nodiscard]] explicit constexpr moving_ref(reference_type ref_ LIFETIMEBOUND) noexcept : ref{ &ref_ } {}
-
-  moving_ref(const T &) = delete ("this type is only to be used with rvalue reference parameters");
-
+  [[nodiscard]] explicit constexpr forwarding_ref(reference_type ref_ LIFETIMEBOUND) noexcept : ref{ &ref_ } {}
   [[nodiscard]] constexpr operator reference_type() noexcept LIFETIMEBOUND { return static_cast<reference_type>(*ref); }
 
 private:
   pointer_type ref;
 };
+
+template<typename T> forwarding_ref(T &&) -> forwarding_ref<T &&>;
+
 
 }// namespace lefticus::tools
 

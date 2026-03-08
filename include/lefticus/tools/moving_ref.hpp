@@ -40,7 +40,7 @@ concept movable = std::is_move_constructible_v<T> && std::is_move_assignable_v<T
 
 template<typename T>
 requires movable<T> && has_move_ctor<T>
-struct moving_ref
+struct [[nodiscard]] moving_ref
 {
   using value_type = T;
   using pointer_type = std::add_pointer_t<T>;
@@ -53,11 +53,11 @@ struct moving_ref
   moving_ref &operator=(moving_ref &&) = delete ("you accidentally move assigned a ref (ref = std::move(other_ref))");
   moving_ref &operator=(const moving_ref &) = delete ("you accidentally copy assigned a ref (ref = other_ref)");
 
-  constexpr moving_ref(reference_type ref_ LIFETIMEBOUND) noexcept : ref{ &ref_ } {}
+  [[nodiscard]] explicit constexpr moving_ref(reference_type ref_ LIFETIMEBOUND) noexcept : ref{ &ref_ } {}
 
   moving_ref(const T &) = delete ("this type is only to be used with rvalue reference parameters");
 
-  constexpr operator reference_type() noexcept LIFETIMEBOUND { return static_cast<reference_type>(*ref); }
+  [[nodiscard]] constexpr operator reference_type() noexcept LIFETIMEBOUND { return static_cast<reference_type>(*ref); }
 
 private:
   pointer_type ref;

@@ -35,7 +35,7 @@ For more information, please refer to <https://unlicense.org>
 
 namespace lefticus::tools {
 
-template<typename T> struct forwarding_ref
+template<typename T> struct [[nodiscard]] forwarding_ref
 {
   using pointer_type = std::add_pointer_t<std::remove_reference_t<T>>;
   using reference_type = T;
@@ -48,8 +48,8 @@ template<typename T> struct forwarding_ref
     "you accidentally move assigned a ref (ref = std::move(other_ref))");
   forwarding_ref &operator=(const forwarding_ref &) = delete ("you accidentally copy assigned a ref (ref = other_ref)");
 
-  constexpr forwarding_ref(reference_type ref_ LIFETIMEBOUND) noexcept : ref{ &ref_ } {}
-  constexpr operator reference_type() noexcept LIFETIMEBOUND { return static_cast<reference_type>(*ref); }
+  [[nodiscard]] explicit constexpr forwarding_ref(reference_type ref_ LIFETIMEBOUND) noexcept : ref{ &ref_ } {}
+  [[nodiscard]] constexpr operator reference_type() noexcept LIFETIMEBOUND { return static_cast<reference_type>(*ref); }
 
 private:
   pointer_type ref;

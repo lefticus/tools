@@ -35,31 +35,29 @@ For more information, please refer to <https://unlicense.org>
 
 namespace lefticus::tools {
 
-template <typename T>
-struct forwarding_ref {
+template<typename T> struct forwarding_ref
+{
   using pointer_type = std::add_pointer_t<std::remove_reference_t<T>>;
   using reference_type = T;
 
-  forwarding_ref(forwarding_ref &&) = delete("you accidentally moved a ref (auto obj = std::move(ref)) instead of (Type obj = ref)");
-  forwarding_ref(const forwarding_ref&) = delete("you accidentally copied a ref (auto obj = ref) instead of (Type obj = ref)");
-  forwarding_ref& operator=(forwarding_ref&&) = delete("you accidentally move assigned a ref (ref = std::move(other_ref))");
-  forwarding_ref& operator=(const forwarding_ref&) = delete("you accidentally copy assigned a ref (ref = other_ref)");
+  forwarding_ref(forwarding_ref &&) = delete (
+    "you accidentally moved a ref (auto obj = std::move(ref)) instead of (Type obj = ref)");
+  forwarding_ref(const forwarding_ref &) = delete (
+    "you accidentally copied a ref (auto obj = ref) instead of (Type obj = ref)");
+  forwarding_ref &operator=(forwarding_ref &&) = delete (
+    "you accidentally move assigned a ref (ref = std::move(other_ref))");
+  forwarding_ref &operator=(const forwarding_ref &) = delete ("you accidentally copy assigned a ref (ref = other_ref)");
 
-  constexpr forwarding_ref(reference_type ref_ LIFETIMEBOUND) noexcept
-      : ref{&ref_} {}
-  constexpr operator reference_type() noexcept LIFETIMEBOUND {
-    return static_cast<reference_type>(*ref);
-  }
+  constexpr forwarding_ref(reference_type ref_ LIFETIMEBOUND) noexcept : ref{ &ref_ } {}
+  constexpr operator reference_type() noexcept LIFETIMEBOUND { return static_cast<reference_type>(*ref); }
 
- private:
+private:
   pointer_type ref;
 };
 
-template <typename T>
-forwarding_ref(T&&) -> forwarding_ref<T&&>;
+template<typename T> forwarding_ref(T &&) -> forwarding_ref<T &&>;
 
 
 }// namespace lefticus::tools
 
 #endif
-

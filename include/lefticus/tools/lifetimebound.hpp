@@ -30,7 +30,6 @@ For more information, please refer to <https://unlicense.org>
 #define LEFTICUS_TOOLS_LIFETIMEBOUND_HPP
 
 
-
 #if defined(__has_cpp_attribute)
 #if __has_cpp_attribute(clang::lifetimebound)
 #define LIFETIMEBOUND [[clang::lifetimebound]]

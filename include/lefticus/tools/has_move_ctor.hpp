@@ -33,14 +33,15 @@ For more information, please refer to <https://unlicense.org>
 
 namespace lefticus::tools {
 
-template <class P>
-struct DetectMoveConstruction {
-  operator P const&();
-  operator P&&();
+template<class P> struct DetectMoveConstruction
+{
+  operator P const &();
+  operator P &&();
 };
 
-template <typename T>
-concept copyable_xor_moveable = requires(T t, DetectMoveConstruction<T> m) {
+template<typename T>
+concept copyable_xor_moveable = requires(T t, DetectMoveConstruction<T> m)
+{
   // borrowed from
   // https://stackoverflow.com/questions/51901837/how-to-get-if-a-type-is-truly-move-constructible/51912859#51912859
   // if this line below compiles then we know we only have either
@@ -51,9 +52,9 @@ concept copyable_xor_moveable = requires(T t, DetectMoveConstruction<T> m) {
   t = m;
 };
 
-template <typename T>
+template<typename T>
 concept has_move_ctor = std::move_constructible<T> && !copyable_xor_moveable<T>;
 
-}
+}// namespace lefticus::tools
 
 #endif

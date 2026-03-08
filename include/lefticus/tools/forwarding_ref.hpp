@@ -50,6 +50,7 @@ template<typename T> struct [[nodiscard]] forwarding_ref
 
   [[nodiscard]] explicit constexpr forwarding_ref(reference_type ref_ LIFETIMEBOUND) noexcept : ref{ &ref_ } {}
   [[nodiscard]] constexpr operator reference_type() noexcept LIFETIMEBOUND { return static_cast<reference_type>(*ref); }
+  [[nodiscard]] constexpr reference_type take() noexcept LIFETIMEBOUND { return static_cast<reference_type>(*ref); }
 
 private:
   pointer_type ref;

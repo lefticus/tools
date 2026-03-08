@@ -58,6 +58,8 @@ struct [[nodiscard]] moving_ref
   moving_ref(const T &) = delete ("this type is only to be used with rvalue reference parameters");
 
   [[nodiscard]] constexpr operator reference_type() noexcept LIFETIMEBOUND { return static_cast<reference_type>(*ref); }
+  [[nodiscard]] constexpr reference_type take() noexcept LIFETIMEBOUND { return static_cast<reference_type>(*ref); }
+
 
 private:
   pointer_type ref;

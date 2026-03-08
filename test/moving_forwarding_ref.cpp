@@ -75,6 +75,17 @@ template<typename T> constexpr auto can_construct_const()
   return requires(const T mct) { T{ lefticus::tools::moving_ref<T>{ std::move(mct) } }; };
 }
 
+TEST_CASE("[forwarding_ref] take() behaves as expected")
+{
+  [] () consteval {
+    auto use_forwarding_ref = []<typename T>(lefticus::tools::forwarding_ref<T> data) {
+      std::string(data.take());
+    };
+
+    use_forwarding_ref(lefticus::tools::forwarding_ref{"Hello World"});
+  }();
+}
+
 
 TEST_CASE("[forwarding_ref] behaves as expected")
 {
